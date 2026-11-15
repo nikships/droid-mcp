@@ -10,7 +10,13 @@ description: Drive Factory Droid through MCP for local coding turns and prompts,
 ## Route once
 
 Call `server_info` once for `profile`, counts, and `maxAutonomy`; reuse known
-schemas and settings. Choose the backend before choosing an operation:
+schemas and settings. Read the root skill before session and work-starting
+tools: call `skill_read`, read exactly `skill://droid/SKILL.md`, get that URI
+through `skills/get`, or get prompt `droid`. Reference-only reads leave the
+gate closed. See [the gate policy](references/tool-families.md#skill-read-gate)
+for the gated operations and identity boundary.
+
+Choose the backend before choosing an operation:
 
 | Backend | Family                | Use                                                                                               |
 | ------- | --------------------- | ------------------------------------------------------------------------------------------------- |

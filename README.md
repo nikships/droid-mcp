@@ -131,9 +131,17 @@ Each flag also has an environment variable. The defaults work for a local instal
 | `--log-level`        | `DROID_MCP_LOG_LEVEL`       | `info`                                               |
 | `--prompt-timeout`   |                             | `300000` ms                                          |
 | `--request-timeout`  |                             | `30000` ms                                           |
-| `--require-skill`    | `DROID_MCP_REQUIRE_SKILL`   | `true`; require reading the skill before `session_*` |
+| `--require-skill`    | `DROID_MCP_REQUIRE_SKILL`   | `true`; skill-read gate for session/work-start tools |
 
 `--max-autonomy` accepts `off`, `low`, `medium`, or `high`. `FACTORY_API_KEY` is read from the environment and is never logged and never returned by a tool.
+
+The skill gate covers all `session_*` tools and the daemon/hosted work-starting
+operations listed in [tool families](src/skill/droid/references/tool-families.md#skill-read-gate).
+Call `skill_read`, read exactly `skill://droid/SKILL.md`, get that URI through
+`skills/get`, or get prompt `droid` to unlock them. Reference-only reads do not
+count. The state is per MCP session; sessionless (2026-07-28) clients share it
+per bearer key, not per client. Disable with `--require-skill=false` or
+`DROID_MCP_REQUIRE_SKILL=false`.
 
 `FACTORY_BASE_URL` and `FACTORY_CONTEXT_BASE_URL` must be bare `http` or `https` origins, with no path, query, fragment, or credentials. The `rest_*` tools call `FACTORY_BASE_URL`. The `context_*` tools call `FACTORY_CONTEXT_BASE_URL`, the Prem origin that serves the Context API, and fail with `context_base_url_missing` while it is unset. `FACTORY_CONTEXT_HEADERS` is a JSON object of string values sent with every Context request, for example `{"x-factory-organization":"org-..."}`. It may not set `authorization`, `cookie`, `host`, or framing headers such as `content-type`. An invalid value for any of the three stops startup with exit code 2. Context header values are treated as secrets, like the API key.
 

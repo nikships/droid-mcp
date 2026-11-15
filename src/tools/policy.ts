@@ -1,5 +1,24 @@
 import * as Tool from "effect/ai/Tool"
 
+/** Work-starting operations outside the local session_* family. */
+export const SKILL_GATED_TOOLS: ReadonlySet<string> = new Set([
+  "daemon_initialize_session",
+  "daemon_load_session",
+  "daemon_add_user_message",
+  "daemon_fork_session",
+  "daemon_resolve_queued_user_message",
+  "droid_load_session",
+  "droid_fork_session",
+  "droid_resolve_queued_user_message",
+  "daemon_run_automation",
+  "daemon_dispatch_automation_run",
+  "rest_create_remote_session",
+  "rest_post_remote_session_message",
+])
+
+export const requiresSkill = (name: string): boolean =>
+  name.startsWith("session_") || SKILL_GATED_TOOLS.has(name)
+
 /**
  * The four MCP tool hints, derived for every tool from its name and
  * description. Effect's defaults claim every tool is a destructive,

@@ -3,11 +3,14 @@ import * as Toolkit from "effect/ai/Toolkit"
 import * as Effect from "effect/Effect"
 
 import type { Config } from "../config.ts"
+import type { DaemonService } from "../droid/daemon-service.ts"
+import type { JsonValue } from "../droid/protocol.ts"
+import type { RestService } from "../droid/rest-service.ts"
 import type { SessionHubService } from "../droid/turns.ts"
 import { contextTools } from "./context.ts"
 import type { ToolFailure } from "./failure.ts"
 import { generatedSurface } from "./generated.ts"
-import { annotate } from "./policy.ts"
+import { annotate, requiresSkill } from "./policy.ts"
 import { restTools } from "./rest.ts"
 import { Info, infoHandler } from "./server.ts"
 import type { Advertised } from "./server.ts"
@@ -19,23 +22,24 @@ import { sessionPromptTools } from "./session-prompts.ts"
 import { sessionTools } from "./session.ts"
 import { SkillGate, SkillRead, skillReadHandler } from "./skill.ts"
 
-const gateSessionHandlers = (
-  // SAFETY: each handler object is keyed by tool name with its own parameter
-  // schema; erasing to `never` here lets one wrapper gate every session tool.
-  handlers: Readonly<
-    Record<string, (params: never) => Effect.Effect<unknown, ToolFailure, SessionHubService>>
-  >,
+const gateHandlers = <R>(
+  handlers: Readonly<Record<string, (params: never) => Effect.Effect<unknown, ToolFailure, R>>>,
 ) => {
   const gated: Record<
     string,
-    (params: never) => Effect.Effect<unknown, ToolFailure, SkillGate | SessionHubService>
+    (params: JsonValue | undefined) => Effect.Effect<unknown, ToolFailure, SkillGate | R>
   > = {}
 
   for (const [name, handler] of Object.entries(handlers)) {
-    gated[name] = (params: never) =>
-      Effect.flatMap(
-        SkillGate.use((gate) => gate.requireRead),
-        () => handler(params),
+    const requireRead = requiresSkill(name)
+      ? SkillGate.use((gate) => gate.requireRead)
+      : Effect.void
+
+    gated[name] = (params: JsonValue | undefined) =>
+      Effect.flatMap(requireRead, () =>
+        // SAFETY: the toolkit decodes each tool's parameters before this wrapper;
+        // the merged record erases the individual handler parameter types.
+        handler(params as never),
       )
   }
 
@@ -78,26 +82,26 @@ export const toolsFor = (config: Config, advertised?: Omit<Advertised, "operatio
   // annotation widens that key type so one layer can serve a runtime list.
   const toolkit = Toolkit.make(...tools) as Toolkit.Toolkit<Record<string, Tool.Any>>
 
-  const handlers = {
+  const handlers = gateHandlers<SessionHubService | DaemonService | RestService | SkillGate>({
     server_info: infoHandler(config, {
       profile: advertised?.profile ?? "full",
       toolCount: advertised?.toolCount ?? count,
       operationCount: count,
     }),
     skill_read: skillReadHandler,
-    ...gateSessionHandlers(session.handlers),
-    ...gateSessionHandlers(prompts.handlers),
-    ...gateSessionHandlers(admin.handlers),
-    ...gateSessionHandlers(mcp.handlers),
-    ...gateSessionHandlers(history.handlers),
-    ...gateSessionHandlers(discover.handlers),
+    ...session.handlers,
+    ...prompts.handlers,
+    ...admin.handlers,
+    ...mcp.handlers,
+    ...history.handlers,
+    ...discover.handlers,
     ...rest.handlers,
     ...context.handlers,
     ...generated.handlers,
-  }
+  })
 
-  // SAFETY: the record is keyed by every tool name above; the widened toolkit
-  // key type cannot express each tool's parameter schema.
+  // SAFETY: the record covers every tool above; the widened toolkit cannot
+  // retain each decoded parameter schema.
   const handlersLayer = toolkit.toLayer(handlers as Parameters<typeof toolkit.toLayer>[0])
 
   return { toolkit, handlers: handlersLayer, handlerRecord: handlers, tools, count }

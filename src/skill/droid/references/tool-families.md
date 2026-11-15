@@ -22,6 +22,30 @@ The SDK has 35 `droid.*` methods. Seven of them belong to the session loop:
 `request_permission`, `ask_user`, `pick_options`. Use the local wrappers for
 that loop; these seven have no generated `droid_*` tool.
 
+## Skill-read gate
+
+With `--require-skill=true` (default), read the root skill before session and
+work-starting tools. All 32 `session_*` operations retain their gate, including
+local reads and controls. These 12 operations also require the read:
+
+- `daemon_initialize_session`, `daemon_load_session`, `daemon_add_user_message`
+- `daemon_fork_session`, `daemon_resolve_queued_user_message`
+- `droid_load_session`, `droid_fork_session`, `droid_resolve_queued_user_message`
+- `daemon_run_automation`, `daemon_dispatch_automation_run`
+- `rest_create_remote_session`, `rest_post_remote_session_message`
+
+The policy applies to full tools, compact listed tools, and inner operations
+in `tool_call` and `batch`. Other daemon/hosted reads and controls, automation
+CRUD, `droid_append_messages` (history only), and Context operations stay open.
+Arguments are decoded before the gate is checked.
+
+`skill_read`, a resource read of exactly `skill://droid/SKILL.md`, `skills/get`
+of that URI, or prompt `droid` unlocks the gate. Reading reference files alone
+does not. State is per MCP session; sessionless (2026-07-28) requests share
+read state per bearer key, not per client. The read set is LRU-bounded to 4096
+entries; an evicted session/key must read again. Set `--require-skill=false`
+or `DROID_MCP_REQUIRE_SKILL=false` to disable the gate.
+
 ## Discover only what is missing
 
 `tools_search` matches all query words against names/descriptions; narrow with
@@ -208,7 +232,8 @@ state before retrying a mutation after a transport error or timeout.
 
 - `unknown_tool`: search the correct operation name.
 - `skill_not_read`: call `skill_read`, read `skill://droid/SKILL.md`, or get
-  prompt `droid` before calling `session_*` tools.
+  that URI via `skills/get` or prompt `droid` before session and work-starting
+  tools; see [the gate policy](#skill-read-gate).
 - `invalid_arguments`, `invalid_params`: correct inputs against the known schema;
   describe it only if missing/stale.
 - `invalid_select`: correct the pointer; after dispatch use the attached `ref`,

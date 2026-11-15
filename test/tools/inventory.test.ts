@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest"
 import { SURFACE, SURFACE_COUNT } from "../../src/generated/surface.ts"
 import { DAEMON_UNSERVED_METHODS, SESSION_OWNED_METHODS } from "../../src/tools/generated.ts"
 import { toolsFor } from "../../src/tools/index.ts"
+import { SKILL_GATED_TOOLS, requiresSkill } from "../../src/tools/policy.ts"
 import { testConfig } from "../support/config.ts"
 
 /** Every hand-written tool that is not generated from the SDK surface. */
@@ -149,6 +150,51 @@ const familyOf = (name: string): string => name.slice(0, name.indexOf("_"))
 const toolNames = (): ReadonlyArray<string> => Object.keys(toolsFor(testConfig()).toolkit.tools)
 
 describe("tool inventory", () => {
+  it("pins the entire skill gate policy to the served inventory", () => {
+    const workStarts = [
+      "daemon_initialize_session",
+      "daemon_load_session",
+      "daemon_add_user_message",
+      "daemon_fork_session",
+      "daemon_resolve_queued_user_message",
+      "droid_load_session",
+      "droid_fork_session",
+      "droid_resolve_queued_user_message",
+      "daemon_run_automation",
+      "daemon_dispatch_automation_run",
+      "rest_create_remote_session",
+      "rest_post_remote_session_message",
+    ]
+
+    const names = toolNames()
+    const sessions = HAND_WRITTEN.filter((name) => name.startsWith("session_"))
+
+    expect(SKILL_GATED_TOOLS.size).toBe(12)
+    expect([...SKILL_GATED_TOOLS].sort()).toEqual([...workStarts].sort())
+    expect(sessions).toHaveLength(32)
+
+    for (const name of [...sessions, ...workStarts]) expect(names).toContain(name)
+    expect(names.filter(requiresSkill).sort()).toEqual([...sessions, ...workStarts].sort())
+
+    for (const name of [
+      "daemon_interrupt_session",
+      "daemon_close_session",
+      "daemon_list_automations",
+      "daemon_create_automation",
+      "daemon_update_automation",
+      "daemon_delete_automation",
+      "droid_append_messages",
+      "rest_get_remote_session",
+      "rest_interrupt_remote_session",
+      "rest_update_remote_session",
+      "rest_delete_remote_session",
+      "context_create_document",
+    ]) {
+      expect(names).toContain(name)
+      expect(requiresSkill(name), name).toBe(false)
+    }
+  })
+
   it("counts one generated tool per SDK method plus the hand-written tools", () => {
     const generated = SURFACE.filter(
       (entry) =>
