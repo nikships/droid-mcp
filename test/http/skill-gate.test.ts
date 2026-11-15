@@ -2,6 +2,7 @@ import { mkdtempSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 
+import { LoadSessionResultSchema } from "@factory/droid-sdk"
 import * as Effect from "effect/Effect"
 import * as Exit from "effect/Exit"
 import * as HttpServerRequest from "effect/http/HttpServerRequest"
@@ -23,6 +24,11 @@ import type { ToolClient } from "../support/mcp-tools.ts"
 
 const KEY = "skill-gate-key"
 const PROTOCOL = "2025-11-25"
+
+const LOAD_SESSION_RESULT = {
+  session: { messages: [] },
+  settings: { modelId: "fake-model", reasoningEffort: "low" },
+}
 
 const FailureBody = Schema.Struct({
   result: Schema.Struct({
@@ -86,9 +92,42 @@ const openSession = async (server: TestServer) => {
   }
 
   return {
+    rpc,
     call: (name: string, args: Json = {}) => rpc("tools/call", { name, arguments: args }),
     readResource: (uri: string) => rpc("resources/read", { uri }),
     getPrompt: (name: string) => rpc("prompts/get", { name }),
+  }
+}
+
+const sessionlessRpc = (server: TestServer) => {
+  let id = 0
+
+  return async (key: string, method: string, target: string, params: Record<string, Json>) => {
+    id += 1
+
+    return readBody(
+      await server.post(
+        {
+          jsonrpc: "2.0",
+          id,
+          method,
+          params: {
+            ...params,
+            _meta: {
+              "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+              "io.modelcontextprotocol/clientCapabilities": {},
+              "io.modelcontextprotocol/clientInfo": { name: "vitest", version: "1.0.0" },
+            },
+          },
+        },
+        {
+          authorization: "Bearer " + key,
+          "mcp-protocol-version": "2026-07-28",
+          "mcp-method": method,
+          "mcp-name": target,
+        },
+      ),
+    )
   }
 }
 
@@ -220,6 +259,33 @@ describe.each(LOCAL_ROUTES)("local gate: $toolProfile $via", ({ toolProfile, via
 })
 
 describe.each(["full", "compact"] as const)("root skill reads: %s", (toolProfile) => {
+  describe.each(["stateful", "sessionless"] as const)("%s identity", (identity) => {
+    it.each([
+      [
+        "skills/get",
+        "skill://droid/references/prompts.md",
+        { uri: "skill://droid/references/prompts.md" },
+      ],
+      ["prompts/get", "other", { name: "other" }],
+    ] as const)("does not unlock after non-root %s", async (method, target, params) => {
+      const server = await startServer({ config: testConfig({ toolProfile }), keys: [KEY] })
+      servers.push(server)
+      const rpcSessionless = sessionlessRpc(server)
+
+      const rpc =
+        identity === "stateful"
+          ? (await openSession(server)).rpc
+          : (method: string, params: Record<string, Json>) =>
+              rpcSessionless(KEY, method, method === "tools/call" ? "session_list" : target, params)
+
+      const list = () => rpc("tools/call", { name: "session_list", arguments: {} })
+
+      expect(failureOf(await list()).code).toBe("skill_not_read")
+      expect(await rpc(method, params)).toMatchObject({ error: { code: expect.any(Number) } })
+      expect(failureOf(await list()).code).toBe("skill_not_read")
+    })
+  })
+
   it("does not unlock a stateful session after a reference-only read", async () => {
     const server = await startServer({ config: testConfig({ toolProfile }), keys: [KEY] })
     servers.push(server)
@@ -246,40 +312,7 @@ describe.each(["full", "compact"] as const)("root skill reads: %s", (toolProfile
       })
 
       servers.push(server)
-      let id = 0
-
-      const rpc = async (
-        key: string,
-        method: string,
-        target: string,
-        params: Record<string, Json>,
-      ) => {
-        id += 1
-
-        return readBody(
-          await server.post(
-            {
-              jsonrpc: "2.0",
-              id,
-              method,
-              params: {
-                ...params,
-                _meta: {
-                  "io.modelcontextprotocol/protocolVersion": "2026-07-28",
-                  "io.modelcontextprotocol/clientCapabilities": {},
-                  "io.modelcontextprotocol/clientInfo": { name: "vitest", version: "1.0.0" },
-                },
-              },
-            },
-            {
-              authorization: "Bearer " + key,
-              "mcp-protocol-version": "2026-07-28",
-              "mcp-method": method,
-              "mcp-name": target,
-            },
-          ),
-        )
-      }
+      const rpc = sessionlessRpc(server)
 
       const list = (key = KEY) =>
         rpc(key, "tools/call", "session_list", { name: "session_list", arguments: {} })
@@ -319,6 +352,16 @@ describe.each(ROUTES)("work-start gate: $toolProfile $via", ({ toolProfile, via 
         }
 
         if (request.method === "daemon.list_automations") return { result: { automations: [] } }
+
+        if (request.method === "daemon.fork_session" || request.method === "droid.fork_session") {
+          return { result: { newSessionId: "s-fork" } }
+        }
+
+        if (request.method === "daemon.dispatch_automation_run") {
+          return { result: { success: true, sessionId: "s-automation" } }
+        }
+
+        if (request.method === "droid.load_session") return { result: LOAD_SESSION_RESULT }
 
         return { result: {} }
       },
@@ -371,6 +414,41 @@ describe.each(ROUTES)("work-start gate: $toolProfile $via", ({ toolProfile, via 
           name: "daemon_run_automation",
           args: { automationId: "a-1" },
           method: "daemon.run_automation",
+        },
+        {
+          name: "daemon_load_session",
+          args: { sessionId: "s-1", token: "fake" },
+          method: "daemon.load_session",
+        },
+        {
+          name: "daemon_fork_session",
+          args: { sessionId: "s-1" },
+          method: "daemon.fork_session",
+        },
+        {
+          name: "daemon_resolve_queued_user_message",
+          args: {},
+          method: "daemon.resolve_queued_user_message",
+        },
+        {
+          name: "droid_load_session",
+          args: { sessionId: "s-1" },
+          method: "droid.load_session",
+        },
+        {
+          name: "droid_fork_session",
+          args: {},
+          method: "droid.fork_session",
+        },
+        {
+          name: "droid_resolve_queued_user_message",
+          args: { requestId: "r-1", action: "update_queue", queuePlacement: "end_of_turn" },
+          method: "droid.resolve_queued_user_message",
+        },
+        {
+          name: "daemon_dispatch_automation_run",
+          args: { automationId: "a-1" },
+          method: "daemon.dispatch_automation_run",
         },
         {
           name: "rest_create_remote_session",
@@ -471,6 +549,10 @@ describe.each(ROUTES)("work-start gate: $toolProfile $via", ({ toolProfile, via 
 })
 
 describe("skill-read gating", () => {
+  it("uses an SDK-valid load-session reply", () => {
+    expect(LoadSessionResultSchema.safeParse(LOAD_SESSION_RESULT).success).toBe(true)
+  })
+
   it("blocks session_* tools before skill_read and unlocks after skill_read", async () => {
     const server = await startServer({
       config: testConfig({ toolProfile: "compact" }),

@@ -17221,846 +17221,18 @@ export const SURFACE: ReadonlyArray<WireEntry> = [
       required: ["machineId", "cwd"],
     },
     result: {
-      allOf: [
-        {
+      type: "object",
+      properties: {
+        sessionId: {
+          type: "string",
+        },
+        hostId: {
+          type: "string",
+        },
+        session: {
           type: "object",
           properties: {
-            sessionId: {
-              type: "string",
-            },
-            hostId: {
-              type: "string",
-            },
-            session: {
-              type: "object",
-              properties: {
-                messages: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      id: {
-                        type: "string",
-                      },
-                      role: {
-                        enum: ["user", "assistant", "tool", "system"],
-                      },
-                      content: {
-                        type: "array",
-                        items: {
-                          anyOf: [
-                            {
-                              type: "object",
-                              properties: {
-                                id: {
-                                  type: "string",
-                                },
-                                type: {
-                                  const: "text",
-                                },
-                                text: {
-                                  type: "string",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "text"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                id: {
-                                  type: "string",
-                                },
-                                type: {
-                                  const: "image",
-                                },
-                                source: {
-                                  type: "object",
-                                  properties: {
-                                    type: {
-                                      const: "base64",
-                                    },
-                                    data: {
-                                      type: "string",
-                                    },
-                                    mediaType: {
-                                      enum: ["image/jpeg", "image/png", "image/gif", "image/webp"],
-                                    },
-                                  },
-                                  additionalProperties: false,
-                                  required: ["type", "data", "mediaType"],
-                                },
-                                generated: {
-                                  type: "boolean",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "source"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                id: {
-                                  type: "string",
-                                },
-                                type: {
-                                  const: "thinking",
-                                },
-                                signature: {
-                                  type: "string",
-                                },
-                                signatureProvider: {
-                                  anyOf: [
-                                    {
-                                      enum: [
-                                        "anthropic",
-                                        "openai",
-                                        "generic-chat-completion-api",
-                                        "factory",
-                                        "google",
-                                        "xai",
-                                        "bedrock-converse",
-                                      ],
-                                    },
-                                    {
-                                      const: "unknown",
-                                    },
-                                  ],
-                                },
-                                thinking: {
-                                  type: "string",
-                                },
-                                durationMs: {
-                                  type: "number",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "signature", "thinking"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                id: {
-                                  type: "string",
-                                },
-                                type: {
-                                  const: "redacted_thinking",
-                                },
-                                data: {
-                                  type: "string",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "data"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                type: {
-                                  const: "tool_use",
-                                },
-                                id: {
-                                  type: "string",
-                                },
-                                input: {
-                                  type: "object",
-                                  additionalProperties: {},
-                                },
-                                name: {
-                                  type: "string",
-                                },
-                                thoughtSignature: {
-                                  type: "string",
-                                },
-                                namespace: {
-                                  type: "string",
-                                },
-                                scriptExecution: {
-                                  type: "object",
-                                  properties: {
-                                    runId: {
-                                      type: "string",
-                                    },
-                                    outerToolUseId: {
-                                      type: "string",
-                                    },
-                                  },
-                                  additionalProperties: false,
-                                  required: ["runId", "outerToolUseId"],
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "id", "input", "name"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                id: {
-                                  type: "string",
-                                },
-                                type: {
-                                  const: "tool_result",
-                                },
-                                toolUseId: {
-                                  type: "string",
-                                },
-                                content: {
-                                  anyOf: [
-                                    {
-                                      type: "string",
-                                    },
-                                    {
-                                      type: "array",
-                                      items: {
-                                        anyOf: [
-                                          {
-                                            type: "object",
-                                            properties: {
-                                              id: {
-                                                type: "string",
-                                              },
-                                              type: {
-                                                const: "text",
-                                              },
-                                              text: {
-                                                type: "string",
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: ["type", "text"],
-                                          },
-                                          {
-                                            type: "object",
-                                            properties: {
-                                              id: {
-                                                type: "string",
-                                              },
-                                              type: {
-                                                const: "image",
-                                              },
-                                              source: {
-                                                type: "object",
-                                                properties: {
-                                                  type: {
-                                                    const: "base64",
-                                                  },
-                                                  data: {
-                                                    type: "string",
-                                                  },
-                                                  mediaType: {
-                                                    enum: [
-                                                      "image/jpeg",
-                                                      "image/png",
-                                                      "image/gif",
-                                                      "image/webp",
-                                                    ],
-                                                  },
-                                                },
-                                                additionalProperties: false,
-                                                required: ["type", "data", "mediaType"],
-                                              },
-                                              generated: {
-                                                type: "boolean",
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: ["type", "source"],
-                                          },
-                                          {
-                                            type: "object",
-                                            properties: {
-                                              id: {
-                                                type: "string",
-                                              },
-                                              type: {
-                                                const: "document",
-                                              },
-                                              source: {
-                                                anyOf: [
-                                                  {
-                                                    type: "object",
-                                                    properties: {
-                                                      type: {
-                                                        const: "base64",
-                                                      },
-                                                      mediaType: {
-                                                        const: "application/pdf",
-                                                      },
-                                                      data: {
-                                                        type: "string",
-                                                      },
-                                                      parsedData: {
-                                                        type: "string",
-                                                      },
-                                                      name: {
-                                                        type: "string",
-                                                      },
-                                                      path: {
-                                                        type: "string",
-                                                      },
-                                                    },
-                                                    additionalProperties: false,
-                                                    required: ["type", "mediaType", "data"],
-                                                  },
-                                                  {
-                                                    type: "object",
-                                                    properties: {
-                                                      type: {
-                                                        const: "text",
-                                                      },
-                                                      mediaType: {
-                                                        const: "text/plain",
-                                                      },
-                                                      data: {
-                                                        type: "string",
-                                                      },
-                                                      name: {
-                                                        type: "string",
-                                                      },
-                                                      mime: {
-                                                        type: "string",
-                                                      },
-                                                    },
-                                                    additionalProperties: false,
-                                                    required: ["type", "mediaType", "data"],
-                                                  },
-                                                ],
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: ["type", "source"],
-                                          },
-                                        ],
-                                      },
-                                    },
-                                  ],
-                                },
-                                isError: {
-                                  type: "boolean",
-                                },
-                                modelContent: {
-                                  type: "string",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "toolUseId"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                id: {
-                                  type: "string",
-                                },
-                                type: {
-                                  const: "document",
-                                },
-                                source: {
-                                  anyOf: [
-                                    {
-                                      type: "object",
-                                      properties: {
-                                        type: {
-                                          const: "base64",
-                                        },
-                                        mediaType: {
-                                          const: "application/pdf",
-                                        },
-                                        data: {
-                                          type: "string",
-                                        },
-                                        parsedData: {
-                                          type: "string",
-                                        },
-                                        name: {
-                                          type: "string",
-                                        },
-                                        path: {
-                                          type: "string",
-                                        },
-                                      },
-                                      additionalProperties: false,
-                                      required: ["type", "mediaType", "data"],
-                                    },
-                                    {
-                                      type: "object",
-                                      properties: {
-                                        type: {
-                                          const: "text",
-                                        },
-                                        mediaType: {
-                                          const: "text/plain",
-                                        },
-                                        data: {
-                                          type: "string",
-                                        },
-                                        name: {
-                                          type: "string",
-                                        },
-                                        mime: {
-                                          type: "string",
-                                        },
-                                      },
-                                      additionalProperties: false,
-                                      required: ["type", "mediaType", "data"],
-                                    },
-                                  ],
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "source"],
-                            },
-                          ],
-                        },
-                      },
-                      createdAt: {
-                        type: "number",
-                      },
-                      updatedAt: {
-                        type: "number",
-                      },
-                      parentId: {
-                        type: "string",
-                      },
-                      seq: {
-                        type: "number",
-                      },
-                      userMessageSource: {
-                        enum: [
-                          "web",
-                          "desktop",
-                          "cli_tui",
-                          "cli_exec",
-                          "cli_acp",
-                          "slack",
-                          "jira",
-                          "linear",
-                          "microsoft-teams",
-                          "google-chat",
-                          "sessions_api",
-                          "api",
-                          "sdk",
-                          "automation",
-                          "readiness-remediation",
-                          "readiness-evaluation",
-                          "wiki-generation",
-                          "wiki-ci-setup",
-                        ],
-                      },
-                      sender: {
-                        anyOf: [
-                          {
-                            type: "object",
-                            properties: {
-                              kind: {
-                                const: "orchestrator",
-                              },
-                              sessionId: {
-                                type: "string",
-                              },
-                            },
-                            additionalProperties: false,
-                            required: ["kind", "sessionId"],
-                          },
-                          {
-                            type: "object",
-                            properties: {
-                              kind: {
-                                const: "agent",
-                              },
-                              title: {
-                                type: "string",
-                              },
-                              sessionId: {
-                                type: "string",
-                              },
-                            },
-                            additionalProperties: false,
-                            required: ["kind", "title", "sessionId"],
-                          },
-                        ],
-                      },
-                      author: {
-                        type: "object",
-                        properties: {
-                          userId: {
-                            type: "string",
-                          },
-                          name: {
-                            type: "string",
-                          },
-                        },
-                        additionalProperties: false,
-                        required: ["userId"],
-                      },
-                      interactionMode: {
-                        enum: ["auto", "spec", "agi", "mission"],
-                      },
-                      visibility: {
-                        enum: ["both", "llm_only", "user_only"],
-                      },
-                      openaiMessageId: {
-                        type: "string",
-                      },
-                      openaiPhase: {
-                        enum: ["commentary", "final_answer"],
-                      },
-                      openaiEncryptedContent: {
-                        type: "string",
-                      },
-                      openaiReasoningId: {
-                        type: "string",
-                      },
-                      openaiReasoningSummary: {
-                        type: "string",
-                      },
-                      geminiThoughtSignature: {
-                        type: "string",
-                      },
-                      chatCompletionReasoningField: {
-                        enum: ["reasoning", "reasoning_content"],
-                      },
-                      chatCompletionReasoningContent: {
-                        type: "string",
-                      },
-                      geminiNativeContent: {
-                        type: "string",
-                      },
-                      isUserVisible: {
-                        type: "boolean",
-                      },
-                      isError: {
-                        type: "boolean",
-                      },
-                      modelId: {
-                        type: "string",
-                      },
-                      apiProvider: {
-                        enum: [
-                          "bedrock",
-                          "anthropic",
-                          "vertex_anthropic",
-                          "bedrock_anthropic",
-                          "bedrock_converse",
-                          "bedrock_openai",
-                          "openai",
-                          "azure_openai",
-                          "azure_anthropic",
-                          "google",
-                          "xai",
-                          "mistral",
-                          "fireworks",
-                          "baseten",
-                          "together",
-                          "snowflake",
-                          "databricks",
-                        ],
-                      },
-                      routerId: {
-                        type: "string",
-                      },
-                      reasoningEffort: {
-                        enum: [
-                          "none",
-                          "dynamic",
-                          "off",
-                          "minimal",
-                          "low",
-                          "medium",
-                          "high",
-                          "xhigh",
-                          "max",
-                        ],
-                      },
-                      hookEventName: {
-                        type: "string",
-                      },
-                      hookMatcher: {
-                        type: "string",
-                      },
-                      hookCommands: {
-                        type: "array",
-                        items: {
-                          type: "object",
-                          properties: {
-                            command: {
-                              type: "string",
-                            },
-                            timeout: {
-                              type: "number",
-                            },
-                          },
-                          additionalProperties: false,
-                          required: ["command"],
-                        },
-                      },
-                      hookStatus: {
-                        enum: ["executing", "completed", "error"],
-                      },
-                      hookResults: {
-                        type: "array",
-                        items: {
-                          type: "object",
-                          properties: {
-                            exitCode: {
-                              type: "number",
-                            },
-                            stdout: {
-                              type: "string",
-                            },
-                            stderr: {
-                              type: "string",
-                            },
-                            suppressOutput: {
-                              type: "boolean",
-                            },
-                          },
-                          additionalProperties: false,
-                          required: ["exitCode", "stdout", "stderr"],
-                        },
-                      },
-                      hookToolCallId: {
-                        type: "string",
-                      },
-                      hookParentId: {
-                        type: "string",
-                      },
-                      hookOrder: {
-                        type: "number",
-                      },
-                      hookPreventedAction: {
-                        type: "boolean",
-                      },
-                      hiddenFromUserViews: {
-                        type: "boolean",
-                      },
-                      hookStartTime: {
-                        type: "number",
-                      },
-                      hookEndTime: {
-                        type: "number",
-                      },
-                      isParallelExecution: {
-                        type: "boolean",
-                      },
-                      parallelGroupId: {
-                        type: "string",
-                      },
-                    },
-                    additionalProperties: false,
-                    required: ["id", "role", "content", "createdAt", "updatedAt"],
-                  },
-                },
-                title: {
-                  type: "string",
-                },
-              },
-              additionalProperties: false,
-              required: ["messages"],
-            },
-            mcpServers: {
-              type: "array",
-              items: {
-                anyOf: [
-                  {
-                    type: "object",
-                    properties: {
-                      name: {
-                        type: "string",
-                      },
-                      command: {
-                        type: "string",
-                      },
-                      args: {
-                        type: "array",
-                        items: {
-                          type: "string",
-                        },
-                      },
-                      env: {
-                        type: "object",
-                        additionalProperties: {
-                          type: "string",
-                        },
-                      },
-                    },
-                    additionalProperties: false,
-                    required: ["name", "command"],
-                  },
-                  {
-                    type: "object",
-                    properties: {
-                      type: {
-                        const: "http",
-                      },
-                      name: {
-                        type: "string",
-                      },
-                      url: {
-                        type: "string",
-                      },
-                      headers: {
-                        type: "array",
-                        items: {
-                          type: "object",
-                          properties: {
-                            name: {
-                              type: "string",
-                            },
-                            value: {
-                              type: "string",
-                            },
-                          },
-                          additionalProperties: false,
-                          required: ["name", "value"],
-                        },
-                      },
-                      oauth: {
-                        anyOf: [
-                          {
-                            const: false,
-                          },
-                          {
-                            type: "object",
-                            properties: {
-                              scopes: {
-                                type: "array",
-                                items: {
-                                  type: "string",
-                                },
-                              },
-                              resource: {
-                                anyOf: [
-                                  {
-                                    type: "string",
-                                  },
-                                  {
-                                    const: false,
-                                  },
-                                ],
-                              },
-                              authorizationServerIssuer: {
-                                type: "string",
-                              },
-                              clientMetadataUrl: {
-                                type: "string",
-                              },
-                              clientId: {
-                                type: "string",
-                              },
-                              clientSecret: {
-                                type: "string",
-                              },
-                              callbackPort: {
-                                type: "number",
-                              },
-                              tokenEndpointAuthMethod: {
-                                enum: ["none", "client_secret_basic", "client_secret_post"],
-                              },
-                            },
-                            additionalProperties: false,
-                          },
-                        ],
-                      },
-                    },
-                    additionalProperties: false,
-                    required: ["type", "name", "url"],
-                  },
-                  {
-                    type: "object",
-                    properties: {
-                      type: {
-                        const: "sse",
-                      },
-                      name: {
-                        type: "string",
-                      },
-                      url: {
-                        type: "string",
-                      },
-                      headers: {
-                        type: "array",
-                        items: {
-                          type: "object",
-                          properties: {
-                            name: {
-                              type: "string",
-                            },
-                            value: {
-                              type: "string",
-                            },
-                          },
-                          additionalProperties: false,
-                          required: ["name", "value"],
-                        },
-                      },
-                      oauth: {
-                        anyOf: [
-                          {
-                            const: false,
-                          },
-                          {
-                            type: "object",
-                            properties: {
-                              scopes: {
-                                type: "array",
-                                items: {
-                                  type: "string",
-                                },
-                              },
-                              resource: {
-                                anyOf: [
-                                  {
-                                    type: "string",
-                                  },
-                                  {
-                                    const: false,
-                                  },
-                                ],
-                              },
-                              authorizationServerIssuer: {
-                                type: "string",
-                              },
-                              clientMetadataUrl: {
-                                type: "string",
-                              },
-                              clientId: {
-                                type: "string",
-                              },
-                              clientSecret: {
-                                type: "string",
-                              },
-                              callbackPort: {
-                                type: "number",
-                              },
-                              tokenEndpointAuthMethod: {
-                                enum: ["none", "client_secret_basic", "client_secret_post"],
-                              },
-                            },
-                            additionalProperties: false,
-                          },
-                        ],
-                      },
-                    },
-                    additionalProperties: false,
-                    required: ["type", "name", "url"],
-                  },
-                ],
-              },
-            },
-            gitRepo: {
-              type: "object",
-              properties: {
-                owner: {
-                  type: "string",
-                },
-                repoName: {
-                  type: "string",
-                },
-              },
-              additionalProperties: false,
-              required: ["repoName"],
-            },
-            availableModels: {
+            messages: {
               type: "array",
               items: {
                 type: "object",
@@ -18068,40 +17240,523 @@ export const SURFACE: ReadonlyArray<WireEntry> = [
                   id: {
                     type: "string",
                   },
-                  displayName: {
-                    type: "string",
+                  role: {
+                    enum: ["user", "assistant", "tool", "system"],
                   },
-                  shortDisplayName: {
-                    type: "string",
-                  },
-                  modelProvider: {
-                    enum: [
-                      "anthropic",
-                      "openai",
-                      "generic-chat-completion-api",
-                      "factory",
-                      "google",
-                      "xai",
-                      "bedrock-converse",
-                    ],
-                  },
-                  supportedReasoningEfforts: {
+                  content: {
                     type: "array",
                     items: {
-                      enum: [
-                        "none",
-                        "dynamic",
-                        "off",
-                        "minimal",
-                        "low",
-                        "medium",
-                        "high",
-                        "xhigh",
-                        "max",
+                      anyOf: [
+                        {
+                          type: "object",
+                          properties: {
+                            id: {
+                              type: "string",
+                            },
+                            type: {
+                              const: "text",
+                            },
+                            text: {
+                              type: "string",
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "text"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            id: {
+                              type: "string",
+                            },
+                            type: {
+                              const: "image",
+                            },
+                            source: {
+                              type: "object",
+                              properties: {
+                                type: {
+                                  const: "base64",
+                                },
+                                data: {
+                                  type: "string",
+                                },
+                                mediaType: {
+                                  enum: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+                                },
+                              },
+                              additionalProperties: false,
+                              required: ["type", "data", "mediaType"],
+                            },
+                            generated: {
+                              type: "boolean",
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "source"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            id: {
+                              type: "string",
+                            },
+                            type: {
+                              const: "thinking",
+                            },
+                            signature: {
+                              type: "string",
+                            },
+                            signatureProvider: {
+                              anyOf: [
+                                {
+                                  enum: [
+                                    "anthropic",
+                                    "openai",
+                                    "generic-chat-completion-api",
+                                    "factory",
+                                    "google",
+                                    "xai",
+                                    "bedrock-converse",
+                                  ],
+                                },
+                                {
+                                  const: "unknown",
+                                },
+                              ],
+                            },
+                            thinking: {
+                              type: "string",
+                            },
+                            durationMs: {
+                              type: "number",
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "signature", "thinking"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            id: {
+                              type: "string",
+                            },
+                            type: {
+                              const: "redacted_thinking",
+                            },
+                            data: {
+                              type: "string",
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "data"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            type: {
+                              const: "tool_use",
+                            },
+                            id: {
+                              type: "string",
+                            },
+                            input: {
+                              type: "object",
+                              additionalProperties: {},
+                            },
+                            name: {
+                              type: "string",
+                            },
+                            thoughtSignature: {
+                              type: "string",
+                            },
+                            namespace: {
+                              type: "string",
+                            },
+                            scriptExecution: {
+                              type: "object",
+                              properties: {
+                                runId: {
+                                  type: "string",
+                                },
+                                outerToolUseId: {
+                                  type: "string",
+                                },
+                              },
+                              additionalProperties: false,
+                              required: ["runId", "outerToolUseId"],
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "id", "input", "name"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            id: {
+                              type: "string",
+                            },
+                            type: {
+                              const: "tool_result",
+                            },
+                            toolUseId: {
+                              type: "string",
+                            },
+                            content: {
+                              anyOf: [
+                                {
+                                  type: "string",
+                                },
+                                {
+                                  type: "array",
+                                  items: {
+                                    anyOf: [
+                                      {
+                                        type: "object",
+                                        properties: {
+                                          id: {
+                                            type: "string",
+                                          },
+                                          type: {
+                                            const: "text",
+                                          },
+                                          text: {
+                                            type: "string",
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: ["type", "text"],
+                                      },
+                                      {
+                                        type: "object",
+                                        properties: {
+                                          id: {
+                                            type: "string",
+                                          },
+                                          type: {
+                                            const: "image",
+                                          },
+                                          source: {
+                                            type: "object",
+                                            properties: {
+                                              type: {
+                                                const: "base64",
+                                              },
+                                              data: {
+                                                type: "string",
+                                              },
+                                              mediaType: {
+                                                enum: [
+                                                  "image/jpeg",
+                                                  "image/png",
+                                                  "image/gif",
+                                                  "image/webp",
+                                                ],
+                                              },
+                                            },
+                                            additionalProperties: false,
+                                            required: ["type", "data", "mediaType"],
+                                          },
+                                          generated: {
+                                            type: "boolean",
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: ["type", "source"],
+                                      },
+                                      {
+                                        type: "object",
+                                        properties: {
+                                          id: {
+                                            type: "string",
+                                          },
+                                          type: {
+                                            const: "document",
+                                          },
+                                          source: {
+                                            anyOf: [
+                                              {
+                                                type: "object",
+                                                properties: {
+                                                  type: {
+                                                    const: "base64",
+                                                  },
+                                                  mediaType: {
+                                                    const: "application/pdf",
+                                                  },
+                                                  data: {
+                                                    type: "string",
+                                                  },
+                                                  parsedData: {
+                                                    type: "string",
+                                                  },
+                                                  name: {
+                                                    type: "string",
+                                                  },
+                                                  path: {
+                                                    type: "string",
+                                                  },
+                                                },
+                                                additionalProperties: false,
+                                                required: ["type", "mediaType", "data"],
+                                              },
+                                              {
+                                                type: "object",
+                                                properties: {
+                                                  type: {
+                                                    const: "text",
+                                                  },
+                                                  mediaType: {
+                                                    const: "text/plain",
+                                                  },
+                                                  data: {
+                                                    type: "string",
+                                                  },
+                                                  name: {
+                                                    type: "string",
+                                                  },
+                                                  mime: {
+                                                    type: "string",
+                                                  },
+                                                },
+                                                additionalProperties: false,
+                                                required: ["type", "mediaType", "data"],
+                                              },
+                                            ],
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: ["type", "source"],
+                                      },
+                                    ],
+                                  },
+                                },
+                              ],
+                            },
+                            isError: {
+                              type: "boolean",
+                            },
+                            modelContent: {
+                              type: "string",
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "toolUseId"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            id: {
+                              type: "string",
+                            },
+                            type: {
+                              const: "document",
+                            },
+                            source: {
+                              anyOf: [
+                                {
+                                  type: "object",
+                                  properties: {
+                                    type: {
+                                      const: "base64",
+                                    },
+                                    mediaType: {
+                                      const: "application/pdf",
+                                    },
+                                    data: {
+                                      type: "string",
+                                    },
+                                    parsedData: {
+                                      type: "string",
+                                    },
+                                    name: {
+                                      type: "string",
+                                    },
+                                    path: {
+                                      type: "string",
+                                    },
+                                  },
+                                  additionalProperties: false,
+                                  required: ["type", "mediaType", "data"],
+                                },
+                                {
+                                  type: "object",
+                                  properties: {
+                                    type: {
+                                      const: "text",
+                                    },
+                                    mediaType: {
+                                      const: "text/plain",
+                                    },
+                                    data: {
+                                      type: "string",
+                                    },
+                                    name: {
+                                      type: "string",
+                                    },
+                                    mime: {
+                                      type: "string",
+                                    },
+                                  },
+                                  additionalProperties: false,
+                                  required: ["type", "mediaType", "data"],
+                                },
+                              ],
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "source"],
+                        },
                       ],
                     },
                   },
-                  defaultReasoningEffort: {
+                  createdAt: {
+                    type: "number",
+                  },
+                  updatedAt: {
+                    type: "number",
+                  },
+                  parentId: {
+                    type: "string",
+                  },
+                  seq: {
+                    type: "number",
+                  },
+                  userMessageSource: {
+                    enum: [
+                      "web",
+                      "desktop",
+                      "cli_tui",
+                      "cli_exec",
+                      "cli_acp",
+                      "slack",
+                      "jira",
+                      "linear",
+                      "microsoft-teams",
+                      "google-chat",
+                      "sessions_api",
+                      "api",
+                      "sdk",
+                      "automation",
+                      "readiness-remediation",
+                      "readiness-evaluation",
+                      "wiki-generation",
+                      "wiki-ci-setup",
+                    ],
+                  },
+                  sender: {
+                    anyOf: [
+                      {
+                        type: "object",
+                        properties: {
+                          kind: {
+                            const: "orchestrator",
+                          },
+                          sessionId: {
+                            type: "string",
+                          },
+                        },
+                        additionalProperties: false,
+                        required: ["kind", "sessionId"],
+                      },
+                      {
+                        type: "object",
+                        properties: {
+                          kind: {
+                            const: "agent",
+                          },
+                          title: {
+                            type: "string",
+                          },
+                          sessionId: {
+                            type: "string",
+                          },
+                        },
+                        additionalProperties: false,
+                        required: ["kind", "title", "sessionId"],
+                      },
+                    ],
+                  },
+                  author: {
+                    type: "object",
+                    properties: {
+                      userId: {
+                        type: "string",
+                      },
+                      name: {
+                        type: "string",
+                      },
+                    },
+                    additionalProperties: false,
+                    required: ["userId"],
+                  },
+                  interactionMode: {
+                    enum: ["auto", "spec", "agi", "mission"],
+                  },
+                  visibility: {
+                    enum: ["both", "llm_only", "user_only"],
+                  },
+                  openaiMessageId: {
+                    type: "string",
+                  },
+                  openaiPhase: {
+                    enum: ["commentary", "final_answer"],
+                  },
+                  openaiEncryptedContent: {
+                    type: "string",
+                  },
+                  openaiReasoningId: {
+                    type: "string",
+                  },
+                  openaiReasoningSummary: {
+                    type: "string",
+                  },
+                  geminiThoughtSignature: {
+                    type: "string",
+                  },
+                  chatCompletionReasoningField: {
+                    enum: ["reasoning", "reasoning_content"],
+                  },
+                  chatCompletionReasoningContent: {
+                    type: "string",
+                  },
+                  geminiNativeContent: {
+                    type: "string",
+                  },
+                  isUserVisible: {
+                    type: "boolean",
+                  },
+                  isError: {
+                    type: "boolean",
+                  },
+                  modelId: {
+                    type: "string",
+                  },
+                  apiProvider: {
+                    enum: [
+                      "bedrock",
+                      "anthropic",
+                      "vertex_anthropic",
+                      "bedrock_anthropic",
+                      "bedrock_converse",
+                      "bedrock_openai",
+                      "openai",
+                      "azure_openai",
+                      "azure_anthropic",
+                      "google",
+                      "xai",
+                      "mistral",
+                      "fireworks",
+                      "baseten",
+                      "together",
+                      "snowflake",
+                      "databricks",
+                    ],
+                  },
+                  routerId: {
+                    type: "string",
+                  },
+                  reasoningEffort: {
                     enum: [
                       "none",
                       "dynamic",
@@ -18114,327 +17769,631 @@ export const SURFACE: ReadonlyArray<WireEntry> = [
                       "max",
                     ],
                   },
-                  isCustom: {
-                    type: "boolean",
+                  hookEventName: {
+                    type: "string",
                   },
-                  noImageSupport: {
-                    type: "boolean",
+                  hookMatcher: {
+                    type: "string",
                   },
-                  supportsImageGeneration: {
-                    type: "boolean",
+                  hookCommands: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        command: {
+                          type: "string",
+                        },
+                        timeout: {
+                          type: "number",
+                        },
+                      },
+                      additionalProperties: false,
+                      required: ["command"],
+                    },
                   },
-                  tier: {
-                    enum: ["standard", "premium", "overage"],
+                  hookStatus: {
+                    enum: ["executing", "completed", "error"],
                   },
-                  tokenMultiplier: {
+                  hookResults: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        exitCode: {
+                          type: "number",
+                        },
+                        stdout: {
+                          type: "string",
+                        },
+                        stderr: {
+                          type: "string",
+                        },
+                        suppressOutput: {
+                          type: "boolean",
+                        },
+                      },
+                      additionalProperties: false,
+                      required: ["exitCode", "stdout", "stderr"],
+                    },
+                  },
+                  hookToolCallId: {
+                    type: "string",
+                  },
+                  hookParentId: {
+                    type: "string",
+                  },
+                  hookOrder: {
                     type: "number",
                   },
-                  promoLabel: {
-                    type: "string",
-                  },
-                  kind: {
-                    enum: ["concrete", "router"],
-                  },
-                  variantBadge: {
-                    type: "string",
-                  },
-                  isNew: {
+                  hookPreventedAction: {
                     type: "boolean",
+                  },
+                  hiddenFromUserViews: {
+                    type: "boolean",
+                  },
+                  hookStartTime: {
+                    type: "number",
+                  },
+                  hookEndTime: {
+                    type: "number",
+                  },
+                  isParallelExecution: {
+                    type: "boolean",
+                  },
+                  parallelGroupId: {
+                    type: "string",
                   },
                 },
                 additionalProperties: false,
-                required: [
-                  "id",
-                  "displayName",
-                  "shortDisplayName",
-                  "modelProvider",
-                  "supportedReasoningEfforts",
-                  "defaultReasoningEffort",
-                ],
+                required: ["id", "role", "content", "createdAt", "updatedAt"],
               },
             },
-            worktree: {
-              type: "object",
-              properties: {
-                branch: {
-                  type: "string",
-                },
-                lifecycle: {
-                  enum: ["ephemeral", "persistent"],
-                },
-                path: {
-                  type: "string",
-                },
-                parentWorktreePath: {
-                  type: "string",
-                },
-                repoRoot: {
-                  type: "string",
-                },
-                isNewlyCreated: {
-                  type: "boolean",
-                },
-              },
-              additionalProperties: false,
-              required: ["branch", "path", "isNewlyCreated"],
+            title: {
+              type: "string",
             },
           },
           additionalProperties: false,
-          required: ["sessionId", "session"],
+          required: ["messages"],
         },
-        {
-          type: "object",
-          properties: {
-            settings: {
-              type: "object",
-              properties: {
-                modelId: {
-                  type: "string",
-                },
-                reasoningEffort: {
-                  enum: [
-                    "none",
-                    "dynamic",
-                    "off",
-                    "minimal",
-                    "low",
-                    "medium",
-                    "high",
-                    "xhigh",
-                    "max",
-                  ],
-                },
-                routedModelId: {
-                  type: "string",
-                },
-                routedReasoningEffort: {
-                  enum: [
-                    "none",
-                    "dynamic",
-                    "off",
-                    "minimal",
-                    "low",
-                    "medium",
-                    "high",
-                    "xhigh",
-                    "max",
-                  ],
-                },
-                interactionMode: {
-                  enum: ["auto", "spec", "agi", "mission"],
-                },
-                autonomyLevel: {
-                  enum: ["off", "low", "medium", "high"],
-                },
-                availableAutonomyLevels: {
-                  type: "array",
-                  items: {
-                    enum: ["off", "low", "medium", "high"],
+        mcpServers: {
+          type: "array",
+          items: {
+            anyOf: [
+              {
+                type: "object",
+                properties: {
+                  name: {
+                    type: "string",
                   },
-                },
-                specModeModelId: {
-                  type: "string",
-                },
-                specModeReasoningEffort: {
-                  enum: [
-                    "none",
-                    "dynamic",
-                    "off",
-                    "minimal",
-                    "low",
-                    "medium",
-                    "high",
-                    "xhigh",
-                    "max",
-                  ],
-                },
-                missionSettings: {
-                  type: "object",
-                  properties: {
-                    workerModel: {
+                  command: {
+                    type: "string",
+                  },
+                  args: {
+                    type: "array",
+                    items: {
                       type: "string",
                     },
-                    workerReasoningEffort: {
-                      enum: [
-                        "none",
-                        "dynamic",
-                        "off",
-                        "minimal",
-                        "low",
-                        "medium",
-                        "high",
-                        "xhigh",
-                        "max",
-                      ],
-                    },
-                    validationWorkerModel: {
-                      type: "string",
-                    },
-                    validationWorkerReasoningEffort: {
-                      enum: [
-                        "none",
-                        "dynamic",
-                        "off",
-                        "minimal",
-                        "low",
-                        "medium",
-                        "high",
-                        "xhigh",
-                        "max",
-                      ],
-                    },
-                    skipScrutiny: {
-                      type: "boolean",
-                    },
-                    skipUserTesting: {
-                      type: "boolean",
-                    },
                   },
-                  additionalProperties: false,
-                },
-                tags: {
-                  type: "array",
-                  items: {
+                  env: {
                     type: "object",
-                    properties: {
-                      name: {
-                        type: "string",
-                      },
-                      metadata: {
-                        type: "object",
-                        additionalProperties: {
-                          type: "string",
-                        },
-                      },
-                    },
-                    additionalProperties: false,
-                    required: ["name"],
-                  },
-                },
-                sandbox: {
-                  type: "object",
-                  properties: {
-                    enabled: {
-                      type: "boolean",
-                    },
-                    mode: {
-                      enum: ["per-command", "whole-process"],
-                    },
-                  },
-                  additionalProperties: false,
-                  required: ["enabled"],
-                },
-                compactionThresholdCheckEnabled: {
-                  type: "boolean",
-                },
-                toolExecutionMode: {
-                  enum: ["direct_only", "script_only"],
-                },
-                allowSubagentsInScripts: {
-                  type: "boolean",
-                },
-                systemPrompt: {
-                  anyOf: [
-                    {
+                    additionalProperties: {
                       type: "string",
                     },
-                    {
+                  },
+                },
+                additionalProperties: false,
+                required: ["name", "command"],
+              },
+              {
+                type: "object",
+                properties: {
+                  type: {
+                    const: "http",
+                  },
+                  name: {
+                    type: "string",
+                  },
+                  url: {
+                    type: "string",
+                  },
+                  headers: {
+                    type: "array",
+                    items: {
                       type: "object",
                       properties: {
-                        type: {
-                          const: "preset",
+                        name: {
+                          type: "string",
                         },
-                        preset: {
-                          const: "droid",
-                        },
-                        append: {
+                        value: {
                           type: "string",
                         },
                       },
                       additionalProperties: false,
-                      required: ["type", "preset", "append"],
+                      required: ["name", "value"],
                     },
-                  ],
-                },
-                migrationActive: {
-                  type: "boolean",
-                },
-                migrationDirectory: {
-                  type: "string",
-                },
-                artifacts: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      id: {
-                        type: "string",
+                  },
+                  oauth: {
+                    anyOf: [
+                      {
+                        const: false,
                       },
-                      url: {
-                        type: "string",
+                      {
+                        type: "object",
+                        properties: {
+                          scopes: {
+                            type: "array",
+                            items: {
+                              type: "string",
+                            },
+                          },
+                          resource: {
+                            anyOf: [
+                              {
+                                type: "string",
+                              },
+                              {
+                                const: false,
+                              },
+                            ],
+                          },
+                          authorizationServerIssuer: {
+                            type: "string",
+                          },
+                          clientMetadataUrl: {
+                            type: "string",
+                          },
+                          clientId: {
+                            type: "string",
+                          },
+                          clientSecret: {
+                            type: "string",
+                          },
+                          callbackPort: {
+                            type: "number",
+                          },
+                          tokenEndpointAuthMethod: {
+                            enum: ["none", "client_secret_basic", "client_secret_post"],
+                          },
+                        },
+                        additionalProperties: false,
                       },
-                      title: {
-                        type: "string",
-                      },
-                      externalId: {
-                        type: "string",
-                      },
-                      provider: {
-                        enum: ["github", "gitlab", "linear", "jira", "notion", "web"],
-                      },
-                      kind: {
-                        enum: ["pull_request", "issue", "document", "link"],
-                      },
-                      action: {
-                        enum: ["create", "update", "delete", "view", "close", "merge"],
-                      },
-                      source: {
-                        enum: ["tool", "classifier", "user_message"],
-                      },
-                      createdAt: {
-                        type: "string",
-                      },
-                      toolCallId: {
-                        type: "string",
-                      },
-                    },
-                    additionalProperties: false,
-                    required: ["id", "url", "provider", "kind", "source", "createdAt"],
+                    ],
                   },
                 },
-                additionalToolIds: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                  },
-                },
-                enabledToolIds: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                  },
-                },
-                disabledToolIds: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                  },
-                },
-                restrictToolIds: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                  },
-                },
+                additionalProperties: false,
+                required: ["type", "name", "url"],
               },
-              additionalProperties: false,
-              required: ["modelId", "reasoningEffort"],
+              {
+                type: "object",
+                properties: {
+                  type: {
+                    const: "sse",
+                  },
+                  name: {
+                    type: "string",
+                  },
+                  url: {
+                    type: "string",
+                  },
+                  headers: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        name: {
+                          type: "string",
+                        },
+                        value: {
+                          type: "string",
+                        },
+                      },
+                      additionalProperties: false,
+                      required: ["name", "value"],
+                    },
+                  },
+                  oauth: {
+                    anyOf: [
+                      {
+                        const: false,
+                      },
+                      {
+                        type: "object",
+                        properties: {
+                          scopes: {
+                            type: "array",
+                            items: {
+                              type: "string",
+                            },
+                          },
+                          resource: {
+                            anyOf: [
+                              {
+                                type: "string",
+                              },
+                              {
+                                const: false,
+                              },
+                            ],
+                          },
+                          authorizationServerIssuer: {
+                            type: "string",
+                          },
+                          clientMetadataUrl: {
+                            type: "string",
+                          },
+                          clientId: {
+                            type: "string",
+                          },
+                          clientSecret: {
+                            type: "string",
+                          },
+                          callbackPort: {
+                            type: "number",
+                          },
+                          tokenEndpointAuthMethod: {
+                            enum: ["none", "client_secret_basic", "client_secret_post"],
+                          },
+                        },
+                        additionalProperties: false,
+                      },
+                    ],
+                  },
+                },
+                additionalProperties: false,
+                required: ["type", "name", "url"],
+              },
+            ],
+          },
+        },
+        gitRepo: {
+          type: "object",
+          properties: {
+            owner: {
+              type: "string",
+            },
+            repoName: {
+              type: "string",
             },
           },
           additionalProperties: false,
-          required: ["settings"],
+          required: ["repoName"],
         },
-      ],
+        availableModels: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              id: {
+                type: "string",
+              },
+              displayName: {
+                type: "string",
+              },
+              shortDisplayName: {
+                type: "string",
+              },
+              modelProvider: {
+                enum: [
+                  "anthropic",
+                  "openai",
+                  "generic-chat-completion-api",
+                  "factory",
+                  "google",
+                  "xai",
+                  "bedrock-converse",
+                ],
+              },
+              supportedReasoningEfforts: {
+                type: "array",
+                items: {
+                  enum: [
+                    "none",
+                    "dynamic",
+                    "off",
+                    "minimal",
+                    "low",
+                    "medium",
+                    "high",
+                    "xhigh",
+                    "max",
+                  ],
+                },
+              },
+              defaultReasoningEffort: {
+                enum: [
+                  "none",
+                  "dynamic",
+                  "off",
+                  "minimal",
+                  "low",
+                  "medium",
+                  "high",
+                  "xhigh",
+                  "max",
+                ],
+              },
+              isCustom: {
+                type: "boolean",
+              },
+              noImageSupport: {
+                type: "boolean",
+              },
+              supportsImageGeneration: {
+                type: "boolean",
+              },
+              tier: {
+                enum: ["standard", "premium", "overage"],
+              },
+              tokenMultiplier: {
+                type: "number",
+              },
+              promoLabel: {
+                type: "string",
+              },
+              kind: {
+                enum: ["concrete", "router"],
+              },
+              variantBadge: {
+                type: "string",
+              },
+              isNew: {
+                type: "boolean",
+              },
+            },
+            additionalProperties: false,
+            required: [
+              "id",
+              "displayName",
+              "shortDisplayName",
+              "modelProvider",
+              "supportedReasoningEfforts",
+              "defaultReasoningEffort",
+            ],
+          },
+        },
+        worktree: {
+          type: "object",
+          properties: {
+            branch: {
+              type: "string",
+            },
+            lifecycle: {
+              enum: ["ephemeral", "persistent"],
+            },
+            path: {
+              type: "string",
+            },
+            parentWorktreePath: {
+              type: "string",
+            },
+            repoRoot: {
+              type: "string",
+            },
+            isNewlyCreated: {
+              type: "boolean",
+            },
+          },
+          additionalProperties: false,
+          required: ["branch", "path", "isNewlyCreated"],
+        },
+        settings: {
+          type: "object",
+          properties: {
+            modelId: {
+              type: "string",
+            },
+            reasoningEffort: {
+              enum: ["none", "dynamic", "off", "minimal", "low", "medium", "high", "xhigh", "max"],
+            },
+            routedModelId: {
+              type: "string",
+            },
+            routedReasoningEffort: {
+              enum: ["none", "dynamic", "off", "minimal", "low", "medium", "high", "xhigh", "max"],
+            },
+            interactionMode: {
+              enum: ["auto", "spec", "agi", "mission"],
+            },
+            autonomyLevel: {
+              enum: ["off", "low", "medium", "high"],
+            },
+            availableAutonomyLevels: {
+              type: "array",
+              items: {
+                enum: ["off", "low", "medium", "high"],
+              },
+            },
+            specModeModelId: {
+              type: "string",
+            },
+            specModeReasoningEffort: {
+              enum: ["none", "dynamic", "off", "minimal", "low", "medium", "high", "xhigh", "max"],
+            },
+            missionSettings: {
+              type: "object",
+              properties: {
+                workerModel: {
+                  type: "string",
+                },
+                workerReasoningEffort: {
+                  enum: [
+                    "none",
+                    "dynamic",
+                    "off",
+                    "minimal",
+                    "low",
+                    "medium",
+                    "high",
+                    "xhigh",
+                    "max",
+                  ],
+                },
+                validationWorkerModel: {
+                  type: "string",
+                },
+                validationWorkerReasoningEffort: {
+                  enum: [
+                    "none",
+                    "dynamic",
+                    "off",
+                    "minimal",
+                    "low",
+                    "medium",
+                    "high",
+                    "xhigh",
+                    "max",
+                  ],
+                },
+                skipScrutiny: {
+                  type: "boolean",
+                },
+                skipUserTesting: {
+                  type: "boolean",
+                },
+              },
+              additionalProperties: false,
+            },
+            tags: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  name: {
+                    type: "string",
+                  },
+                  metadata: {
+                    type: "object",
+                    additionalProperties: {
+                      type: "string",
+                    },
+                  },
+                },
+                additionalProperties: false,
+                required: ["name"],
+              },
+            },
+            sandbox: {
+              type: "object",
+              properties: {
+                enabled: {
+                  type: "boolean",
+                },
+                mode: {
+                  enum: ["per-command", "whole-process"],
+                },
+              },
+              additionalProperties: false,
+              required: ["enabled"],
+            },
+            compactionThresholdCheckEnabled: {
+              type: "boolean",
+            },
+            toolExecutionMode: {
+              enum: ["direct_only", "script_only"],
+            },
+            allowSubagentsInScripts: {
+              type: "boolean",
+            },
+            systemPrompt: {
+              anyOf: [
+                {
+                  type: "string",
+                },
+                {
+                  type: "object",
+                  properties: {
+                    type: {
+                      const: "preset",
+                    },
+                    preset: {
+                      const: "droid",
+                    },
+                    append: {
+                      type: "string",
+                    },
+                  },
+                  additionalProperties: false,
+                  required: ["type", "preset", "append"],
+                },
+              ],
+            },
+            migrationActive: {
+              type: "boolean",
+            },
+            migrationDirectory: {
+              type: "string",
+            },
+            artifacts: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  id: {
+                    type: "string",
+                  },
+                  url: {
+                    type: "string",
+                  },
+                  title: {
+                    type: "string",
+                  },
+                  externalId: {
+                    type: "string",
+                  },
+                  provider: {
+                    enum: ["github", "gitlab", "linear", "jira", "notion", "web"],
+                  },
+                  kind: {
+                    enum: ["pull_request", "issue", "document", "link"],
+                  },
+                  action: {
+                    enum: ["create", "update", "delete", "view", "close", "merge"],
+                  },
+                  source: {
+                    enum: ["tool", "classifier", "user_message"],
+                  },
+                  createdAt: {
+                    type: "string",
+                  },
+                  toolCallId: {
+                    type: "string",
+                  },
+                },
+                additionalProperties: false,
+                required: ["id", "url", "provider", "kind", "source", "createdAt"],
+              },
+            },
+            additionalToolIds: {
+              type: "array",
+              items: {
+                type: "string",
+              },
+            },
+            enabledToolIds: {
+              type: "array",
+              items: {
+                type: "string",
+              },
+            },
+            disabledToolIds: {
+              type: "array",
+              items: {
+                type: "string",
+              },
+            },
+            restrictToolIds: {
+              type: "array",
+              items: {
+                type: "string",
+              },
+            },
+          },
+          additionalProperties: false,
+          required: ["modelId", "reasoningEffort"],
+        },
+      },
+      additionalProperties: false,
+      required: ["sessionId", "session", "settings"],
     },
   },
   {
@@ -19580,2056 +19539,21 @@ export const SURFACE: ReadonlyArray<WireEntry> = [
       required: ["sessionId"],
     },
     result: {
-      allOf: [
-        {
+      type: "object",
+      properties: {
+        session: {
           type: "object",
           properties: {
-            session: {
-              type: "object",
-              properties: {
-                messages: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      id: {
-                        type: "string",
-                      },
-                      role: {
-                        enum: ["user", "assistant", "tool", "system"],
-                      },
-                      content: {
-                        type: "array",
-                        items: {
-                          anyOf: [
-                            {
-                              type: "object",
-                              properties: {
-                                id: {
-                                  type: "string",
-                                },
-                                type: {
-                                  const: "text",
-                                },
-                                text: {
-                                  type: "string",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "text"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                id: {
-                                  type: "string",
-                                },
-                                type: {
-                                  const: "image",
-                                },
-                                source: {
-                                  type: "object",
-                                  properties: {
-                                    type: {
-                                      const: "base64",
-                                    },
-                                    data: {
-                                      type: "string",
-                                    },
-                                    mediaType: {
-                                      enum: ["image/jpeg", "image/png", "image/gif", "image/webp"],
-                                    },
-                                  },
-                                  additionalProperties: false,
-                                  required: ["type", "data", "mediaType"],
-                                },
-                                generated: {
-                                  type: "boolean",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "source"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                id: {
-                                  type: "string",
-                                },
-                                type: {
-                                  const: "thinking",
-                                },
-                                signature: {
-                                  type: "string",
-                                },
-                                signatureProvider: {
-                                  anyOf: [
-                                    {
-                                      enum: [
-                                        "anthropic",
-                                        "openai",
-                                        "generic-chat-completion-api",
-                                        "factory",
-                                        "google",
-                                        "xai",
-                                        "bedrock-converse",
-                                      ],
-                                    },
-                                    {
-                                      const: "unknown",
-                                    },
-                                  ],
-                                },
-                                thinking: {
-                                  type: "string",
-                                },
-                                durationMs: {
-                                  type: "number",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "signature", "thinking"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                id: {
-                                  type: "string",
-                                },
-                                type: {
-                                  const: "redacted_thinking",
-                                },
-                                data: {
-                                  type: "string",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "data"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                type: {
-                                  const: "tool_use",
-                                },
-                                id: {
-                                  type: "string",
-                                },
-                                input: {
-                                  type: "object",
-                                  additionalProperties: {},
-                                },
-                                name: {
-                                  type: "string",
-                                },
-                                thoughtSignature: {
-                                  type: "string",
-                                },
-                                namespace: {
-                                  type: "string",
-                                },
-                                scriptExecution: {
-                                  type: "object",
-                                  properties: {
-                                    runId: {
-                                      type: "string",
-                                    },
-                                    outerToolUseId: {
-                                      type: "string",
-                                    },
-                                  },
-                                  additionalProperties: false,
-                                  required: ["runId", "outerToolUseId"],
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "id", "input", "name"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                id: {
-                                  type: "string",
-                                },
-                                type: {
-                                  const: "tool_result",
-                                },
-                                toolUseId: {
-                                  type: "string",
-                                },
-                                content: {
-                                  anyOf: [
-                                    {
-                                      type: "string",
-                                    },
-                                    {
-                                      type: "array",
-                                      items: {
-                                        anyOf: [
-                                          {
-                                            type: "object",
-                                            properties: {
-                                              id: {
-                                                type: "string",
-                                              },
-                                              type: {
-                                                const: "text",
-                                              },
-                                              text: {
-                                                type: "string",
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: ["type", "text"],
-                                          },
-                                          {
-                                            type: "object",
-                                            properties: {
-                                              id: {
-                                                type: "string",
-                                              },
-                                              type: {
-                                                const: "image",
-                                              },
-                                              source: {
-                                                type: "object",
-                                                properties: {
-                                                  type: {
-                                                    const: "base64",
-                                                  },
-                                                  data: {
-                                                    type: "string",
-                                                  },
-                                                  mediaType: {
-                                                    enum: [
-                                                      "image/jpeg",
-                                                      "image/png",
-                                                      "image/gif",
-                                                      "image/webp",
-                                                    ],
-                                                  },
-                                                },
-                                                additionalProperties: false,
-                                                required: ["type", "data", "mediaType"],
-                                              },
-                                              generated: {
-                                                type: "boolean",
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: ["type", "source"],
-                                          },
-                                          {
-                                            type: "object",
-                                            properties: {
-                                              id: {
-                                                type: "string",
-                                              },
-                                              type: {
-                                                const: "document",
-                                              },
-                                              source: {
-                                                anyOf: [
-                                                  {
-                                                    type: "object",
-                                                    properties: {
-                                                      type: {
-                                                        const: "base64",
-                                                      },
-                                                      mediaType: {
-                                                        const: "application/pdf",
-                                                      },
-                                                      data: {
-                                                        type: "string",
-                                                      },
-                                                      parsedData: {
-                                                        type: "string",
-                                                      },
-                                                      name: {
-                                                        type: "string",
-                                                      },
-                                                      path: {
-                                                        type: "string",
-                                                      },
-                                                    },
-                                                    additionalProperties: false,
-                                                    required: ["type", "mediaType", "data"],
-                                                  },
-                                                  {
-                                                    type: "object",
-                                                    properties: {
-                                                      type: {
-                                                        const: "text",
-                                                      },
-                                                      mediaType: {
-                                                        const: "text/plain",
-                                                      },
-                                                      data: {
-                                                        type: "string",
-                                                      },
-                                                      name: {
-                                                        type: "string",
-                                                      },
-                                                      mime: {
-                                                        type: "string",
-                                                      },
-                                                    },
-                                                    additionalProperties: false,
-                                                    required: ["type", "mediaType", "data"],
-                                                  },
-                                                ],
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: ["type", "source"],
-                                          },
-                                        ],
-                                      },
-                                    },
-                                  ],
-                                },
-                                isError: {
-                                  type: "boolean",
-                                },
-                                modelContent: {
-                                  type: "string",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "toolUseId"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                id: {
-                                  type: "string",
-                                },
-                                type: {
-                                  const: "document",
-                                },
-                                source: {
-                                  anyOf: [
-                                    {
-                                      type: "object",
-                                      properties: {
-                                        type: {
-                                          const: "base64",
-                                        },
-                                        mediaType: {
-                                          const: "application/pdf",
-                                        },
-                                        data: {
-                                          type: "string",
-                                        },
-                                        parsedData: {
-                                          type: "string",
-                                        },
-                                        name: {
-                                          type: "string",
-                                        },
-                                        path: {
-                                          type: "string",
-                                        },
-                                      },
-                                      additionalProperties: false,
-                                      required: ["type", "mediaType", "data"],
-                                    },
-                                    {
-                                      type: "object",
-                                      properties: {
-                                        type: {
-                                          const: "text",
-                                        },
-                                        mediaType: {
-                                          const: "text/plain",
-                                        },
-                                        data: {
-                                          type: "string",
-                                        },
-                                        name: {
-                                          type: "string",
-                                        },
-                                        mime: {
-                                          type: "string",
-                                        },
-                                      },
-                                      additionalProperties: false,
-                                      required: ["type", "mediaType", "data"],
-                                    },
-                                  ],
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "source"],
-                            },
-                          ],
-                        },
-                      },
-                      createdAt: {
-                        type: "number",
-                      },
-                      updatedAt: {
-                        type: "number",
-                      },
-                      parentId: {
-                        type: "string",
-                      },
-                      seq: {
-                        type: "number",
-                      },
-                      userMessageSource: {
-                        enum: [
-                          "web",
-                          "desktop",
-                          "cli_tui",
-                          "cli_exec",
-                          "cli_acp",
-                          "slack",
-                          "jira",
-                          "linear",
-                          "microsoft-teams",
-                          "google-chat",
-                          "sessions_api",
-                          "api",
-                          "sdk",
-                          "automation",
-                          "readiness-remediation",
-                          "readiness-evaluation",
-                          "wiki-generation",
-                          "wiki-ci-setup",
-                        ],
-                      },
-                      sender: {
-                        anyOf: [
-                          {
-                            type: "object",
-                            properties: {
-                              kind: {
-                                const: "orchestrator",
-                              },
-                              sessionId: {
-                                type: "string",
-                              },
-                            },
-                            additionalProperties: false,
-                            required: ["kind", "sessionId"],
-                          },
-                          {
-                            type: "object",
-                            properties: {
-                              kind: {
-                                const: "agent",
-                              },
-                              title: {
-                                type: "string",
-                              },
-                              sessionId: {
-                                type: "string",
-                              },
-                            },
-                            additionalProperties: false,
-                            required: ["kind", "title", "sessionId"],
-                          },
-                        ],
-                      },
-                      author: {
-                        type: "object",
-                        properties: {
-                          userId: {
-                            type: "string",
-                          },
-                          name: {
-                            type: "string",
-                          },
-                        },
-                        additionalProperties: false,
-                        required: ["userId"],
-                      },
-                      interactionMode: {
-                        enum: ["auto", "spec", "agi", "mission"],
-                      },
-                      visibility: {
-                        enum: ["both", "llm_only", "user_only"],
-                      },
-                      openaiMessageId: {
-                        type: "string",
-                      },
-                      openaiPhase: {
-                        enum: ["commentary", "final_answer"],
-                      },
-                      openaiEncryptedContent: {
-                        type: "string",
-                      },
-                      openaiReasoningId: {
-                        type: "string",
-                      },
-                      openaiReasoningSummary: {
-                        type: "string",
-                      },
-                      geminiThoughtSignature: {
-                        type: "string",
-                      },
-                      chatCompletionReasoningField: {
-                        enum: ["reasoning", "reasoning_content"],
-                      },
-                      chatCompletionReasoningContent: {
-                        type: "string",
-                      },
-                      geminiNativeContent: {
-                        type: "string",
-                      },
-                      isUserVisible: {
-                        type: "boolean",
-                      },
-                      isError: {
-                        type: "boolean",
-                      },
-                      modelId: {
-                        type: "string",
-                      },
-                      apiProvider: {
-                        enum: [
-                          "bedrock",
-                          "anthropic",
-                          "vertex_anthropic",
-                          "bedrock_anthropic",
-                          "bedrock_converse",
-                          "bedrock_openai",
-                          "openai",
-                          "azure_openai",
-                          "azure_anthropic",
-                          "google",
-                          "xai",
-                          "mistral",
-                          "fireworks",
-                          "baseten",
-                          "together",
-                          "snowflake",
-                          "databricks",
-                        ],
-                      },
-                      routerId: {
-                        type: "string",
-                      },
-                      reasoningEffort: {
-                        enum: [
-                          "none",
-                          "dynamic",
-                          "off",
-                          "minimal",
-                          "low",
-                          "medium",
-                          "high",
-                          "xhigh",
-                          "max",
-                        ],
-                      },
-                      hookEventName: {
-                        type: "string",
-                      },
-                      hookMatcher: {
-                        type: "string",
-                      },
-                      hookCommands: {
-                        type: "array",
-                        items: {
-                          type: "object",
-                          properties: {
-                            command: {
-                              type: "string",
-                            },
-                            timeout: {
-                              type: "number",
-                            },
-                          },
-                          additionalProperties: false,
-                          required: ["command"],
-                        },
-                      },
-                      hookStatus: {
-                        enum: ["executing", "completed", "error"],
-                      },
-                      hookResults: {
-                        type: "array",
-                        items: {
-                          type: "object",
-                          properties: {
-                            exitCode: {
-                              type: "number",
-                            },
-                            stdout: {
-                              type: "string",
-                            },
-                            stderr: {
-                              type: "string",
-                            },
-                            suppressOutput: {
-                              type: "boolean",
-                            },
-                          },
-                          additionalProperties: false,
-                          required: ["exitCode", "stdout", "stderr"],
-                        },
-                      },
-                      hookToolCallId: {
-                        type: "string",
-                      },
-                      hookParentId: {
-                        type: "string",
-                      },
-                      hookOrder: {
-                        type: "number",
-                      },
-                      hookPreventedAction: {
-                        type: "boolean",
-                      },
-                      hiddenFromUserViews: {
-                        type: "boolean",
-                      },
-                      hookStartTime: {
-                        type: "number",
-                      },
-                      hookEndTime: {
-                        type: "number",
-                      },
-                      isParallelExecution: {
-                        type: "boolean",
-                      },
-                      parallelGroupId: {
-                        type: "string",
-                      },
-                    },
-                    additionalProperties: false,
-                    required: ["id", "role", "content", "createdAt", "updatedAt"],
-                  },
-                },
-                title: {
-                  type: "string",
-                },
-              },
-              additionalProperties: false,
-              required: ["messages"],
-            },
-            agentTurnOutcome: {
-              anyOf: [
-                {
-                  type: "object",
-                  properties: {
-                    type: {
-                      const: "agent_turn_outcome",
-                    },
-                    turnId: {
-                      type: "string",
-                    },
-                    reason: {
-                      enum: [
-                        "completed",
-                        "cancelled",
-                        "permission_rejected",
-                        "error",
-                        "process_exit",
-                        "spec_handoff",
-                        "structured_output_missing",
-                        "structured_output_invalid",
-                        "structured_output_schema_invalid",
-                        "model_usage_exhausted",
-                        "model_authentication_failed",
-                        "model_request_rejected",
-                        "model_provider_unreachable",
-                        "model_provider_unavailable",
-                        "model_rate_limited",
-                        "prompt_rejected",
-                        "completion_persistence_failed",
-                        "no_approver_available",
-                      ],
-                    },
-                    resultKind: {
-                      const: "structured",
-                    },
-                    result: {
-                      type: "object",
-                      additionalProperties: {},
-                    },
-                    schemaFingerprint: {
-                      type: "string",
-                    },
-                  },
-                  additionalProperties: false,
-                  required: [
-                    "type",
-                    "turnId",
-                    "reason",
-                    "resultKind",
-                    "result",
-                    "schemaFingerprint",
-                  ],
-                },
-                {
-                  type: "object",
-                  properties: {
-                    type: {
-                      const: "agent_turn_outcome",
-                    },
-                    turnId: {
-                      type: "string",
-                    },
-                    reason: {
-                      enum: [
-                        "completed",
-                        "cancelled",
-                        "permission_rejected",
-                        "error",
-                        "process_exit",
-                        "spec_handoff",
-                        "structured_output_missing",
-                        "structured_output_invalid",
-                        "structured_output_schema_invalid",
-                        "model_usage_exhausted",
-                        "model_authentication_failed",
-                        "model_request_rejected",
-                        "model_provider_unreachable",
-                        "model_provider_unavailable",
-                        "model_rate_limited",
-                        "prompt_rejected",
-                        "completion_persistence_failed",
-                        "no_approver_available",
-                      ],
-                    },
-                    resultKind: {
-                      const: "text",
-                    },
-                  },
-                  additionalProperties: false,
-                  required: ["type", "turnId", "reason", "resultKind"],
-                },
-                {
-                  type: "object",
-                  properties: {
-                    type: {
-                      const: "agent_turn_outcome",
-                    },
-                    turnId: {
-                      type: "string",
-                    },
-                    reason: {
-                      enum: [
-                        "completed",
-                        "cancelled",
-                        "permission_rejected",
-                        "error",
-                        "process_exit",
-                        "spec_handoff",
-                        "structured_output_missing",
-                        "structured_output_invalid",
-                        "structured_output_schema_invalid",
-                        "model_usage_exhausted",
-                        "model_authentication_failed",
-                        "model_request_rejected",
-                        "model_provider_unreachable",
-                        "model_provider_unavailable",
-                        "model_rate_limited",
-                        "prompt_rejected",
-                        "completion_persistence_failed",
-                        "no_approver_available",
-                      ],
-                    },
-                    resultKind: {
-                      const: "null",
-                    },
-                  },
-                  additionalProperties: false,
-                  required: ["type", "turnId", "reason", "resultKind"],
-                },
-              ],
-            },
-            hasOlderMessages: {
-              type: "boolean",
-            },
-            loopState: {
-              type: "object",
-              properties: {
-                loopId: {
-                  type: "string",
-                },
-                status: {
-                  enum: ["waiting", "running", "due", "stopped", "error"],
-                },
-                intervalMs: {
-                  type: "number",
-                },
-                iteration: {
-                  type: "number",
-                },
-                startedAt: {
-                  type: "number",
-                },
-                updatedAt: {
-                  type: "number",
-                },
-                nextRunAt: {
-                  type: "number",
-                },
-                isDue: {
-                  type: "boolean",
-                },
-                lastRunStartedAt: {
-                  type: "number",
-                },
-                lastRunCompletedAt: {
-                  type: "number",
-                },
-                stopReason: {
-                  enum: [
-                    "user_stopped",
-                    "manual_message",
-                    "interrupted",
-                    "session_closed",
-                    "process_exited",
-                    "error",
-                  ],
-                },
-              },
-              additionalProperties: false,
-              required: [
-                "loopId",
-                "status",
-                "intervalMs",
-                "iteration",
-                "startedAt",
-                "updatedAt",
-                "nextRunAt",
-                "isDue",
-              ],
-            },
-            hostId: {
-              type: "string",
-            },
-            mcpServers: {
-              type: "array",
-              items: {
-                anyOf: [
-                  {
-                    type: "object",
-                    properties: {
-                      name: {
-                        type: "string",
-                      },
-                      command: {
-                        type: "string",
-                      },
-                      args: {
-                        type: "array",
-                        items: {
-                          type: "string",
-                        },
-                      },
-                      env: {
-                        type: "object",
-                        additionalProperties: {
-                          type: "string",
-                        },
-                      },
-                    },
-                    additionalProperties: false,
-                    required: ["name", "command"],
-                  },
-                  {
-                    type: "object",
-                    properties: {
-                      type: {
-                        const: "http",
-                      },
-                      name: {
-                        type: "string",
-                      },
-                      url: {
-                        type: "string",
-                      },
-                      headers: {
-                        type: "array",
-                        items: {
-                          type: "object",
-                          properties: {
-                            name: {
-                              type: "string",
-                            },
-                            value: {
-                              type: "string",
-                            },
-                          },
-                          additionalProperties: false,
-                          required: ["name", "value"],
-                        },
-                      },
-                      oauth: {
-                        anyOf: [
-                          {
-                            const: false,
-                          },
-                          {
-                            type: "object",
-                            properties: {
-                              scopes: {
-                                type: "array",
-                                items: {
-                                  type: "string",
-                                },
-                              },
-                              resource: {
-                                anyOf: [
-                                  {
-                                    type: "string",
-                                  },
-                                  {
-                                    const: false,
-                                  },
-                                ],
-                              },
-                              authorizationServerIssuer: {
-                                type: "string",
-                              },
-                              clientMetadataUrl: {
-                                type: "string",
-                              },
-                              clientId: {
-                                type: "string",
-                              },
-                              clientSecret: {
-                                type: "string",
-                              },
-                              callbackPort: {
-                                type: "number",
-                              },
-                              tokenEndpointAuthMethod: {
-                                enum: ["none", "client_secret_basic", "client_secret_post"],
-                              },
-                            },
-                            additionalProperties: false,
-                          },
-                        ],
-                      },
-                    },
-                    additionalProperties: false,
-                    required: ["type", "name", "url"],
-                  },
-                  {
-                    type: "object",
-                    properties: {
-                      type: {
-                        const: "sse",
-                      },
-                      name: {
-                        type: "string",
-                      },
-                      url: {
-                        type: "string",
-                      },
-                      headers: {
-                        type: "array",
-                        items: {
-                          type: "object",
-                          properties: {
-                            name: {
-                              type: "string",
-                            },
-                            value: {
-                              type: "string",
-                            },
-                          },
-                          additionalProperties: false,
-                          required: ["name", "value"],
-                        },
-                      },
-                      oauth: {
-                        anyOf: [
-                          {
-                            const: false,
-                          },
-                          {
-                            type: "object",
-                            properties: {
-                              scopes: {
-                                type: "array",
-                                items: {
-                                  type: "string",
-                                },
-                              },
-                              resource: {
-                                anyOf: [
-                                  {
-                                    type: "string",
-                                  },
-                                  {
-                                    const: false,
-                                  },
-                                ],
-                              },
-                              authorizationServerIssuer: {
-                                type: "string",
-                              },
-                              clientMetadataUrl: {
-                                type: "string",
-                              },
-                              clientId: {
-                                type: "string",
-                              },
-                              clientSecret: {
-                                type: "string",
-                              },
-                              callbackPort: {
-                                type: "number",
-                              },
-                              tokenEndpointAuthMethod: {
-                                enum: ["none", "client_secret_basic", "client_secret_post"],
-                              },
-                            },
-                            additionalProperties: false,
-                          },
-                        ],
-                      },
-                    },
-                    additionalProperties: false,
-                    required: ["type", "name", "url"],
-                  },
-                ],
-              },
-            },
-            pendingPermissions: {
+            messages: {
               type: "array",
               items: {
                 type: "object",
                 properties: {
-                  toolUses: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        toolUse: {
-                          type: "object",
-                          properties: {
-                            type: {
-                              const: "tool_use",
-                            },
-                            id: {
-                              type: "string",
-                            },
-                            input: {
-                              type: "object",
-                              additionalProperties: {},
-                            },
-                            name: {
-                              type: "string",
-                            },
-                            thoughtSignature: {
-                              type: "string",
-                            },
-                            namespace: {
-                              type: "string",
-                            },
-                            scriptExecution: {
-                              type: "object",
-                              properties: {
-                                runId: {
-                                  type: "string",
-                                },
-                                outerToolUseId: {
-                                  type: "string",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["runId", "outerToolUseId"],
-                            },
-                          },
-                          additionalProperties: false,
-                          required: ["type", "id", "input", "name"],
-                        },
-                        confirmationType: {
-                          enum: [
-                            "edit",
-                            "exec",
-                            "create",
-                            "ask_user",
-                            "exit_spec_mode",
-                            "recommend_mission",
-                            "propose_mission",
-                            "start_mission_run",
-                            "apply_patch",
-                            "mcp_tool",
-                            "sandbox_violation",
-                            "droid_shield_violation",
-                            "script",
-                          ],
-                        },
-                        details: {
-                          anyOf: [
-                            {
-                              type: "object",
-                              properties: {
-                                type: {
-                                  const: "edit",
-                                },
-                                filePath: {
-                                  type: "string",
-                                },
-                                fileName: {
-                                  type: "string",
-                                },
-                                oldContent: {
-                                  type: "string",
-                                },
-                                newContent: {
-                                  type: "string",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "filePath", "fileName"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                type: {
-                                  const: "exec",
-                                },
-                                fullCommand: {
-                                  type: "string",
-                                },
-                                command: {
-                                  type: "string",
-                                },
-                                extractedCommands: {
-                                  type: "array",
-                                  items: {
-                                    type: "string",
-                                  },
-                                },
-                                impactLevel: {
-                                  type: "string",
-                                },
-                                riskLevelReason: {
-                                  type: "string",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "fullCommand", "command"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                type: {
-                                  const: "create",
-                                },
-                                filePath: {
-                                  type: "string",
-                                },
-                                fileName: {
-                                  type: "string",
-                                },
-                                content: {
-                                  type: "string",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "filePath", "fileName", "content"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                type: {
-                                  const: "ask_user",
-                                },
-                                questionnaire: {
-                                  type: "string",
-                                },
-                                parsed: {
-                                  type: "object",
-                                  properties: {
-                                    questions: {
-                                      type: "array",
-                                      items: {
-                                        type: "object",
-                                        properties: {
-                                          index: {
-                                            type: "number",
-                                          },
-                                          topic: {
-                                            type: "string",
-                                          },
-                                          question: {
-                                            type: "string",
-                                          },
-                                          options: {
-                                            type: "array",
-                                            items: {
-                                              type: "string",
-                                            },
-                                          },
-                                          multiSelect: {
-                                            type: "boolean",
-                                          },
-                                        },
-                                        additionalProperties: false,
-                                        required: ["index", "topic", "question", "options"],
-                                      },
-                                    },
-                                  },
-                                  additionalProperties: false,
-                                  required: ["questions"],
-                                },
-                                parseError: {
-                                  type: "object",
-                                  properties: {
-                                    message: {
-                                      type: "string",
-                                    },
-                                    line: {
-                                      type: "number",
-                                    },
-                                  },
-                                  additionalProperties: false,
-                                  required: ["message"],
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "questionnaire"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                type: {
-                                  const: "exit_spec_mode",
-                                },
-                                plan: {
-                                  type: "string",
-                                },
-                                title: {
-                                  type: "string",
-                                },
-                                contextSavingsPercent: {
-                                  type: "number",
-                                },
-                                supportsClientStartedHandoff: {
-                                  type: "boolean",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "plan"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                type: {
-                                  const: "propose_mission",
-                                },
-                                proposal: {
-                                  type: "string",
-                                },
-                                title: {
-                                  type: "string",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "proposal"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                type: {
-                                  const: "start_mission_run",
-                                },
-                                runningMissionCount: {
-                                  type: "number",
-                                },
-                                runningMissionSessionIds: {
-                                  type: "array",
-                                  items: {
-                                    type: "string",
-                                  },
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "runningMissionCount", "runningMissionSessionIds"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                type: {
-                                  const: "apply_patch",
-                                },
-                                filePath: {
-                                  type: "string",
-                                },
-                                fileName: {
-                                  type: "string",
-                                },
-                                patchContent: {
-                                  type: "string",
-                                },
-                                oldContent: {
-                                  type: "string",
-                                },
-                                newContent: {
-                                  type: "string",
-                                },
-                                files: {
-                                  type: "array",
-                                  items: {
-                                    type: "object",
-                                    properties: {
-                                      filePath: {
-                                        type: "string",
-                                      },
-                                      fileName: {
-                                        type: "string",
-                                      },
-                                      operation: {
-                                        enum: ["create", "update", "delete"],
-                                      },
-                                      moveTo: {
-                                        type: "string",
-                                      },
-                                      oldContent: {
-                                        type: "string",
-                                      },
-                                      newContent: {
-                                        type: "string",
-                                      },
-                                    },
-                                    additionalProperties: false,
-                                    required: ["filePath", "fileName", "operation"],
-                                  },
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "filePath", "fileName", "patchContent"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                type: {
-                                  const: "mcp_tool",
-                                },
-                                toolName: {
-                                  type: "string",
-                                },
-                                impactLevel: {
-                                  type: "string",
-                                },
-                                serverName: {
-                                  type: "string",
-                                },
-                                actualToolName: {
-                                  type: "string",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "toolName", "impactLevel"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                type: {
-                                  const: "sandbox_violation",
-                                },
-                                violatingToolName: {
-                                  type: "string",
-                                },
-                                target: {
-                                  type: "string",
-                                },
-                                operationType: {
-                                  enum: ["read", "write", "network", "tool"],
-                                },
-                                violationType: {
-                                  enum: ["filesystem-read", "filesystem-write", "network", "tool"],
-                                },
-                                reason: {
-                                  type: "string",
-                                },
-                                violationReason: {
-                                  enum: ["deny-list", "not-allowed"],
-                                },
-                                isOrgDeny: {
-                                  type: "boolean",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: [
-                                "type",
-                                "violatingToolName",
-                                "target",
-                                "operationType",
-                                "violationType",
-                                "reason",
-                                "isOrgDeny",
-                              ],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                type: {
-                                  const: "droid_shield_violation",
-                                },
-                                command: {
-                                  type: "string",
-                                },
-                                reason: {
-                                  type: "string",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "command", "reason"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                type: {
-                                  const: "recommend_mission",
-                                },
-                                reason: {
-                                  type: "string",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "reason"],
-                            },
-                            {
-                              type: "object",
-                              properties: {
-                                type: {
-                                  const: "script",
-                                },
-                                impactLevel: {
-                                  type: "string",
-                                },
-                                calls: {
-                                  type: "array",
-                                  items: {
-                                    type: "object",
-                                    properties: {
-                                      toolName: {
-                                        type: "string",
-                                      },
-                                      line: {
-                                        type: "number",
-                                      },
-                                      column: {
-                                        type: "number",
-                                      },
-                                      toolInput: {
-                                        type: "object",
-                                        additionalProperties: {},
-                                      },
-                                      confirmation: {
-                                        anyOf: [
-                                          {
-                                            type: "object",
-                                            properties: {
-                                              type: {
-                                                const: "edit",
-                                              },
-                                              filePath: {
-                                                type: "string",
-                                              },
-                                              fileName: {
-                                                type: "string",
-                                              },
-                                              oldContent: {
-                                                type: "string",
-                                              },
-                                              newContent: {
-                                                type: "string",
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: ["type", "filePath", "fileName"],
-                                          },
-                                          {
-                                            type: "object",
-                                            properties: {
-                                              type: {
-                                                const: "exec",
-                                              },
-                                              fullCommand: {
-                                                type: "string",
-                                              },
-                                              command: {
-                                                type: "string",
-                                              },
-                                              extractedCommands: {
-                                                type: "array",
-                                                items: {
-                                                  type: "string",
-                                                },
-                                              },
-                                              impactLevel: {
-                                                type: "string",
-                                              },
-                                              riskLevelReason: {
-                                                type: "string",
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: ["type", "fullCommand", "command"],
-                                          },
-                                          {
-                                            type: "object",
-                                            properties: {
-                                              type: {
-                                                const: "create",
-                                              },
-                                              filePath: {
-                                                type: "string",
-                                              },
-                                              fileName: {
-                                                type: "string",
-                                              },
-                                              content: {
-                                                type: "string",
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: ["type", "filePath", "fileName", "content"],
-                                          },
-                                          {
-                                            type: "object",
-                                            properties: {
-                                              type: {
-                                                const: "ask_user",
-                                              },
-                                              questionnaire: {
-                                                type: "string",
-                                              },
-                                              parsed: {
-                                                type: "object",
-                                                properties: {
-                                                  questions: {
-                                                    type: "array",
-                                                    items: {
-                                                      type: "object",
-                                                      properties: {
-                                                        index: {
-                                                          type: "number",
-                                                        },
-                                                        topic: {
-                                                          type: "string",
-                                                        },
-                                                        question: {
-                                                          type: "string",
-                                                        },
-                                                        options: {
-                                                          type: "array",
-                                                          items: {
-                                                            type: "string",
-                                                          },
-                                                        },
-                                                        multiSelect: {
-                                                          type: "boolean",
-                                                        },
-                                                      },
-                                                      additionalProperties: false,
-                                                      required: [
-                                                        "index",
-                                                        "topic",
-                                                        "question",
-                                                        "options",
-                                                      ],
-                                                    },
-                                                  },
-                                                },
-                                                additionalProperties: false,
-                                                required: ["questions"],
-                                              },
-                                              parseError: {
-                                                type: "object",
-                                                properties: {
-                                                  message: {
-                                                    type: "string",
-                                                  },
-                                                  line: {
-                                                    type: "number",
-                                                  },
-                                                },
-                                                additionalProperties: false,
-                                                required: ["message"],
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: ["type", "questionnaire"],
-                                          },
-                                          {
-                                            type: "object",
-                                            properties: {
-                                              type: {
-                                                const: "exit_spec_mode",
-                                              },
-                                              plan: {
-                                                type: "string",
-                                              },
-                                              title: {
-                                                type: "string",
-                                              },
-                                              contextSavingsPercent: {
-                                                type: "number",
-                                              },
-                                              supportsClientStartedHandoff: {
-                                                type: "boolean",
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: ["type", "plan"],
-                                          },
-                                          {
-                                            type: "object",
-                                            properties: {
-                                              type: {
-                                                const: "propose_mission",
-                                              },
-                                              proposal: {
-                                                type: "string",
-                                              },
-                                              title: {
-                                                type: "string",
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: ["type", "proposal"],
-                                          },
-                                          {
-                                            type: "object",
-                                            properties: {
-                                              type: {
-                                                const: "start_mission_run",
-                                              },
-                                              runningMissionCount: {
-                                                type: "number",
-                                              },
-                                              runningMissionSessionIds: {
-                                                type: "array",
-                                                items: {
-                                                  type: "string",
-                                                },
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: [
-                                              "type",
-                                              "runningMissionCount",
-                                              "runningMissionSessionIds",
-                                            ],
-                                          },
-                                          {
-                                            type: "object",
-                                            properties: {
-                                              type: {
-                                                const: "apply_patch",
-                                              },
-                                              filePath: {
-                                                type: "string",
-                                              },
-                                              fileName: {
-                                                type: "string",
-                                              },
-                                              patchContent: {
-                                                type: "string",
-                                              },
-                                              oldContent: {
-                                                type: "string",
-                                              },
-                                              newContent: {
-                                                type: "string",
-                                              },
-                                              files: {
-                                                type: "array",
-                                                items: {
-                                                  type: "object",
-                                                  properties: {
-                                                    filePath: {
-                                                      type: "string",
-                                                    },
-                                                    fileName: {
-                                                      type: "string",
-                                                    },
-                                                    operation: {
-                                                      enum: ["create", "update", "delete"],
-                                                    },
-                                                    moveTo: {
-                                                      type: "string",
-                                                    },
-                                                    oldContent: {
-                                                      type: "string",
-                                                    },
-                                                    newContent: {
-                                                      type: "string",
-                                                    },
-                                                  },
-                                                  additionalProperties: false,
-                                                  required: ["filePath", "fileName", "operation"],
-                                                },
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: [
-                                              "type",
-                                              "filePath",
-                                              "fileName",
-                                              "patchContent",
-                                            ],
-                                          },
-                                          {
-                                            type: "object",
-                                            properties: {
-                                              type: {
-                                                const: "mcp_tool",
-                                              },
-                                              toolName: {
-                                                type: "string",
-                                              },
-                                              impactLevel: {
-                                                type: "string",
-                                              },
-                                              serverName: {
-                                                type: "string",
-                                              },
-                                              actualToolName: {
-                                                type: "string",
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: ["type", "toolName", "impactLevel"],
-                                          },
-                                          {
-                                            type: "object",
-                                            properties: {
-                                              type: {
-                                                const: "sandbox_violation",
-                                              },
-                                              violatingToolName: {
-                                                type: "string",
-                                              },
-                                              target: {
-                                                type: "string",
-                                              },
-                                              operationType: {
-                                                enum: ["read", "write", "network", "tool"],
-                                              },
-                                              violationType: {
-                                                enum: [
-                                                  "filesystem-read",
-                                                  "filesystem-write",
-                                                  "network",
-                                                  "tool",
-                                                ],
-                                              },
-                                              reason: {
-                                                type: "string",
-                                              },
-                                              violationReason: {
-                                                enum: ["deny-list", "not-allowed"],
-                                              },
-                                              isOrgDeny: {
-                                                type: "boolean",
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: [
-                                              "type",
-                                              "violatingToolName",
-                                              "target",
-                                              "operationType",
-                                              "violationType",
-                                              "reason",
-                                              "isOrgDeny",
-                                            ],
-                                          },
-                                          {
-                                            type: "object",
-                                            properties: {
-                                              type: {
-                                                const: "droid_shield_violation",
-                                              },
-                                              command: {
-                                                type: "string",
-                                              },
-                                              reason: {
-                                                type: "string",
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: ["type", "command", "reason"],
-                                          },
-                                          {
-                                            type: "object",
-                                            properties: {
-                                              type: {
-                                                const: "recommend_mission",
-                                              },
-                                              reason: {
-                                                type: "string",
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: ["type", "reason"],
-                                          },
-                                        ],
-                                      },
-                                      alwaysAsk: {
-                                        type: "boolean",
-                                      },
-                                    },
-                                    additionalProperties: false,
-                                    required: [
-                                      "toolName",
-                                      "line",
-                                      "column",
-                                      "toolInput",
-                                      "confirmation",
-                                    ],
-                                  },
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "impactLevel", "calls"],
-                            },
-                          ],
-                        },
-                      },
-                      additionalProperties: false,
-                      required: ["toolUse", "confirmationType", "details"],
-                    },
-                  },
-                  options: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        label: {
-                          type: "string",
-                        },
-                        value: {
-                          enum: [
-                            "proceed_once",
-                            "proceed_always",
-                            "proceed_always_file",
-                            "proceed_auto_run",
-                            "proceed_auto_run_low",
-                            "proceed_auto_run_medium",
-                            "proceed_auto_run_high",
-                            "proceed_new_session",
-                            "proceed_new_session_low",
-                            "proceed_new_session_medium",
-                            "proceed_new_session_high",
-                            "proceed_edit",
-                            "proceed_always_tools",
-                            "proceed_always_server",
-                            "proceed_report_false_positive",
-                            "cancel",
-                          ],
-                        },
-                      },
-                      additionalProperties: false,
-                      required: ["label", "value"],
-                    },
-                  },
-                  associatedSessionIds: {
-                    type: "array",
-                    items: {
-                      type: "string",
-                    },
-                  },
-                  requestId: {
+                  id: {
                     type: "string",
                   },
-                },
-                additionalProperties: false,
-                required: ["toolUses", "options", "requestId"],
-              },
-            },
-            pendingAskUserRequests: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  toolCallId: {
-                    type: "string",
-                  },
-                  questions: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        index: {
-                          type: "number",
-                        },
-                        topic: {
-                          type: "string",
-                        },
-                        question: {
-                          type: "string",
-                        },
-                        options: {
-                          type: "array",
-                          items: {
-                            type: "string",
-                          },
-                        },
-                        multiSelect: {
-                          type: "boolean",
-                        },
-                        workstreamProposal: {
-                          type: "object",
-                          properties: {
-                            requestId: {
-                              type: "string",
-                            },
-                            sessionId: {
-                              type: "string",
-                            },
-                            title: {
-                              type: "string",
-                            },
-                            goal: {
-                              type: "string",
-                            },
-                            driUserId: {
-                              type: "string",
-                            },
-                            owningTeamId: {
-                              type: "string",
-                            },
-                            serviceAccountId: {
-                              type: "string",
-                            },
-                            machineId: {
-                              type: "string",
-                            },
-                            executionTemplateId: {
-                              type: "string",
-                            },
-                            environmentId: {
-                              type: "string",
-                            },
-                            repos: {
-                              type: "array",
-                              items: {
-                                type: "string",
-                              },
-                            },
-                            connectors: {
-                              type: "array",
-                              items: {
-                                type: "string",
-                              },
-                            },
-                          },
-                          additionalProperties: false,
-                          required: [
-                            "requestId",
-                            "sessionId",
-                            "title",
-                            "goal",
-                            "driUserId",
-                            "repos",
-                            "connectors",
-                          ],
-                        },
-                      },
-                      additionalProperties: false,
-                      required: ["index", "topic", "question", "options"],
-                    },
-                  },
-                  requestId: {
-                    type: "string",
-                  },
-                },
-                additionalProperties: false,
-                required: ["toolCallId", "questions", "requestId"],
-              },
-            },
-            pendingPickOptionsRequests: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  toolCallId: {
-                    type: "string",
-                  },
-                  title: {
-                    type: "string",
-                  },
-                  hint: {
-                    type: "string",
-                  },
-                  emptyText: {
-                    type: "string",
-                  },
-                  rows: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        id: {
-                          type: "string",
-                        },
-                        label: {
-                          type: "string",
-                        },
-                        detail: {
-                          type: "string",
-                        },
-                      },
-                      additionalProperties: false,
-                      required: ["id", "label"],
-                    },
-                  },
-                  multi: {
-                    type: "boolean",
-                  },
-                  preselectedIds: {
-                    type: "array",
-                    items: {
-                      type: "string",
-                    },
-                  },
-                  initialSearch: {
-                    type: "string",
-                  },
-                  requestId: {
-                    type: "string",
-                  },
-                },
-                additionalProperties: false,
-                required: ["toolCallId", "title", "rows", "multi", "preselectedIds", "requestId"],
-              },
-            },
-            isAgentLoopInProgress: {
-              type: "boolean",
-            },
-            pendingMessageRequestIds: {
-              type: "array",
-              items: {
-                type: "string",
-              },
-            },
-            workingState: {
-              enum: [
-                "idle",
-                "thinking",
-                "streaming_assistant_message",
-                "waiting_for_tool_confirmation",
-                "executing_tool",
-                "compacting_conversation",
-              ],
-            },
-            queuedMessages: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  messageId: {
-                    type: "string",
-                  },
-                  text: {
-                    type: "string",
+                  role: {
+                    enum: ["user", "assistant", "tool", "system"],
                   },
                   content: {
                     type: "array",
@@ -21683,113 +19607,332 @@ export const SURFACE: ReadonlyArray<WireEntry> = [
                           additionalProperties: false,
                           required: ["type", "source"],
                         },
-                      ],
-                    },
-                  },
-                  images: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        type: {
-                          const: "base64",
-                        },
-                        data: {
-                          type: "string",
-                        },
-                        mediaType: {
-                          enum: ["image/jpeg", "image/png", "image/gif", "image/webp"],
-                        },
-                      },
-                      additionalProperties: false,
-                      required: ["type", "data", "mediaType"],
-                    },
-                  },
-                  imagePaths: {
-                    type: "array",
-                    items: {
-                      type: "string",
-                    },
-                  },
-                  files: {
-                    type: "array",
-                    items: {
-                      anyOf: [
                         {
                           type: "object",
                           properties: {
+                            id: {
+                              type: "string",
+                            },
                             type: {
-                              const: "base64",
+                              const: "thinking",
                             },
-                            mediaType: {
-                              const: "application/pdf",
-                            },
-                            data: {
+                            signature: {
                               type: "string",
                             },
-                            parsedData: {
+                            signatureProvider: {
+                              anyOf: [
+                                {
+                                  enum: [
+                                    "anthropic",
+                                    "openai",
+                                    "generic-chat-completion-api",
+                                    "factory",
+                                    "google",
+                                    "xai",
+                                    "bedrock-converse",
+                                  ],
+                                },
+                                {
+                                  const: "unknown",
+                                },
+                              ],
+                            },
+                            thinking: {
                               type: "string",
                             },
-                            name: {
-                              type: "string",
-                            },
-                            path: {
-                              type: "string",
+                            durationMs: {
+                              type: "number",
                             },
                           },
                           additionalProperties: false,
-                          required: ["type", "mediaType", "data"],
+                          required: ["type", "signature", "thinking"],
                         },
                         {
                           type: "object",
                           properties: {
-                            type: {
-                              const: "text",
+                            id: {
+                              type: "string",
                             },
-                            mediaType: {
-                              const: "text/plain",
+                            type: {
+                              const: "redacted_thinking",
                             },
                             data: {
                               type: "string",
                             },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "data"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            type: {
+                              const: "tool_use",
+                            },
+                            id: {
+                              type: "string",
+                            },
+                            input: {
+                              type: "object",
+                              additionalProperties: {},
+                            },
                             name: {
                               type: "string",
                             },
-                            mime: {
+                            thoughtSignature: {
+                              type: "string",
+                            },
+                            namespace: {
+                              type: "string",
+                            },
+                            scriptExecution: {
+                              type: "object",
+                              properties: {
+                                runId: {
+                                  type: "string",
+                                },
+                                outerToolUseId: {
+                                  type: "string",
+                                },
+                              },
+                              additionalProperties: false,
+                              required: ["runId", "outerToolUseId"],
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "id", "input", "name"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            id: {
+                              type: "string",
+                            },
+                            type: {
+                              const: "tool_result",
+                            },
+                            toolUseId: {
+                              type: "string",
+                            },
+                            content: {
+                              anyOf: [
+                                {
+                                  type: "string",
+                                },
+                                {
+                                  type: "array",
+                                  items: {
+                                    anyOf: [
+                                      {
+                                        type: "object",
+                                        properties: {
+                                          id: {
+                                            type: "string",
+                                          },
+                                          type: {
+                                            const: "text",
+                                          },
+                                          text: {
+                                            type: "string",
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: ["type", "text"],
+                                      },
+                                      {
+                                        type: "object",
+                                        properties: {
+                                          id: {
+                                            type: "string",
+                                          },
+                                          type: {
+                                            const: "image",
+                                          },
+                                          source: {
+                                            type: "object",
+                                            properties: {
+                                              type: {
+                                                const: "base64",
+                                              },
+                                              data: {
+                                                type: "string",
+                                              },
+                                              mediaType: {
+                                                enum: [
+                                                  "image/jpeg",
+                                                  "image/png",
+                                                  "image/gif",
+                                                  "image/webp",
+                                                ],
+                                              },
+                                            },
+                                            additionalProperties: false,
+                                            required: ["type", "data", "mediaType"],
+                                          },
+                                          generated: {
+                                            type: "boolean",
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: ["type", "source"],
+                                      },
+                                      {
+                                        type: "object",
+                                        properties: {
+                                          id: {
+                                            type: "string",
+                                          },
+                                          type: {
+                                            const: "document",
+                                          },
+                                          source: {
+                                            anyOf: [
+                                              {
+                                                type: "object",
+                                                properties: {
+                                                  type: {
+                                                    const: "base64",
+                                                  },
+                                                  mediaType: {
+                                                    const: "application/pdf",
+                                                  },
+                                                  data: {
+                                                    type: "string",
+                                                  },
+                                                  parsedData: {
+                                                    type: "string",
+                                                  },
+                                                  name: {
+                                                    type: "string",
+                                                  },
+                                                  path: {
+                                                    type: "string",
+                                                  },
+                                                },
+                                                additionalProperties: false,
+                                                required: ["type", "mediaType", "data"],
+                                              },
+                                              {
+                                                type: "object",
+                                                properties: {
+                                                  type: {
+                                                    const: "text",
+                                                  },
+                                                  mediaType: {
+                                                    const: "text/plain",
+                                                  },
+                                                  data: {
+                                                    type: "string",
+                                                  },
+                                                  name: {
+                                                    type: "string",
+                                                  },
+                                                  mime: {
+                                                    type: "string",
+                                                  },
+                                                },
+                                                additionalProperties: false,
+                                                required: ["type", "mediaType", "data"],
+                                              },
+                                            ],
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: ["type", "source"],
+                                      },
+                                    ],
+                                  },
+                                },
+                              ],
+                            },
+                            isError: {
+                              type: "boolean",
+                            },
+                            modelContent: {
                               type: "string",
                             },
                           },
                           additionalProperties: false,
-                          required: ["type", "mediaType", "data"],
+                          required: ["type", "toolUseId"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            id: {
+                              type: "string",
+                            },
+                            type: {
+                              const: "document",
+                            },
+                            source: {
+                              anyOf: [
+                                {
+                                  type: "object",
+                                  properties: {
+                                    type: {
+                                      const: "base64",
+                                    },
+                                    mediaType: {
+                                      const: "application/pdf",
+                                    },
+                                    data: {
+                                      type: "string",
+                                    },
+                                    parsedData: {
+                                      type: "string",
+                                    },
+                                    name: {
+                                      type: "string",
+                                    },
+                                    path: {
+                                      type: "string",
+                                    },
+                                  },
+                                  additionalProperties: false,
+                                  required: ["type", "mediaType", "data"],
+                                },
+                                {
+                                  type: "object",
+                                  properties: {
+                                    type: {
+                                      const: "text",
+                                    },
+                                    mediaType: {
+                                      const: "text/plain",
+                                    },
+                                    data: {
+                                      type: "string",
+                                    },
+                                    name: {
+                                      type: "string",
+                                    },
+                                    mime: {
+                                      type: "string",
+                                    },
+                                  },
+                                  additionalProperties: false,
+                                  required: ["type", "mediaType", "data"],
+                                },
+                              ],
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "source"],
                         },
                       ],
                     },
                   },
-                  outputFormat: {
-                    type: "object",
-                    properties: {
-                      type: {
-                        const: "json_schema",
-                      },
-                      schema: {
-                        type: "object",
-                        additionalProperties: {},
-                      },
-                    },
-                    additionalProperties: false,
-                    required: ["type", "schema"],
+                  createdAt: {
+                    type: "number",
                   },
-                  skipAgentLoop: {
-                    type: "boolean",
+                  updatedAt: {
+                    type: "number",
                   },
-                  queuePlacement: {
-                    enum: ["end_of_turn", "end_of_loop"],
+                  parentId: {
+                    type: "string",
                   },
-                  role: {
-                    enum: ["user", "assistant", "tool", "system"],
-                  },
-                  visibility: {
-                    enum: ["both", "llm_only", "user_only"],
+                  seq: {
+                    type: "number",
                   },
                   userMessageSource: {
                     enum: [
@@ -21859,144 +20002,73 @@ export const SURFACE: ReadonlyArray<WireEntry> = [
                     additionalProperties: false,
                     required: ["userId"],
                   },
-                  chatSettingsCatalog: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        operationId: {
-                          type: "string",
-                        },
-                        pageId: {
-                          type: "string",
-                        },
-                        section: {
-                          type: "string",
-                        },
-                        label: {
-                          type: "string",
-                        },
-                        description: {
-                          type: "string",
-                        },
-                        kind: {
-                          enum: ["setting", "resource", "account"],
-                        },
-                        riskLevel: {
-                          enum: ["low", "medium", "high"],
-                        },
-                        inputSchema: {
-                          type: "object",
-                          properties: {
-                            type: {
-                              const: "object",
-                            },
-                            properties: {
-                              type: "object",
-                              additionalProperties: {},
-                            },
-                            required: {
-                              type: "array",
-                              items: {
-                                type: "string",
-                              },
-                            },
-                            additionalProperties: {
-                              type: "boolean",
-                            },
-                          },
-                          additionalProperties: false,
-                          required: ["type", "properties"],
-                        },
-                      },
-                      additionalProperties: false,
-                      required: [
-                        "operationId",
-                        "pageId",
-                        "section",
-                        "label",
-                        "description",
-                        "kind",
-                        "riskLevel",
-                        "inputSchema",
-                      ],
-                    },
+                  interactionMode: {
+                    enum: ["auto", "spec", "agi", "mission"],
                   },
-                  requestId: {
+                  visibility: {
+                    enum: ["both", "llm_only", "user_only"],
+                  },
+                  openaiMessageId: {
                     type: "string",
                   },
-                },
-                additionalProperties: false,
-                required: ["text", "requestId"],
-              },
-            },
-            gitRepo: {
-              type: "object",
-              properties: {
-                owner: {
-                  type: "string",
-                },
-                repoName: {
-                  type: "string",
-                },
-              },
-              additionalProperties: false,
-              required: ["repoName"],
-            },
-            cwd: {
-              type: "string",
-            },
-            updatedAt: {
-              type: "number",
-            },
-            callingSessionId: {
-              type: "string",
-            },
-            callingToolUseId: {
-              type: "string",
-            },
-            availableModels: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  id: {
+                  openaiPhase: {
+                    enum: ["commentary", "final_answer"],
+                  },
+                  openaiEncryptedContent: {
                     type: "string",
                   },
-                  displayName: {
+                  openaiReasoningId: {
                     type: "string",
                   },
-                  shortDisplayName: {
+                  openaiReasoningSummary: {
                     type: "string",
                   },
-                  modelProvider: {
+                  geminiThoughtSignature: {
+                    type: "string",
+                  },
+                  chatCompletionReasoningField: {
+                    enum: ["reasoning", "reasoning_content"],
+                  },
+                  chatCompletionReasoningContent: {
+                    type: "string",
+                  },
+                  geminiNativeContent: {
+                    type: "string",
+                  },
+                  isUserVisible: {
+                    type: "boolean",
+                  },
+                  isError: {
+                    type: "boolean",
+                  },
+                  modelId: {
+                    type: "string",
+                  },
+                  apiProvider: {
                     enum: [
+                      "bedrock",
                       "anthropic",
+                      "vertex_anthropic",
+                      "bedrock_anthropic",
+                      "bedrock_converse",
+                      "bedrock_openai",
                       "openai",
-                      "generic-chat-completion-api",
-                      "factory",
+                      "azure_openai",
+                      "azure_anthropic",
                       "google",
                       "xai",
-                      "bedrock-converse",
+                      "mistral",
+                      "fireworks",
+                      "baseten",
+                      "together",
+                      "snowflake",
+                      "databricks",
                     ],
                   },
-                  supportedReasoningEfforts: {
-                    type: "array",
-                    items: {
-                      enum: [
-                        "none",
-                        "dynamic",
-                        "off",
-                        "minimal",
-                        "low",
-                        "medium",
-                        "high",
-                        "xhigh",
-                        "max",
-                      ],
-                    },
+                  routerId: {
+                    type: "string",
                   },
-                  defaultReasoningEffort: {
+                  reasoningEffort: {
                     enum: [
                       "none",
                       "dynamic",
@@ -22009,43 +20081,2535 @@ export const SURFACE: ReadonlyArray<WireEntry> = [
                       "max",
                     ],
                   },
-                  isCustom: {
-                    type: "boolean",
+                  hookEventName: {
+                    type: "string",
                   },
-                  noImageSupport: {
-                    type: "boolean",
+                  hookMatcher: {
+                    type: "string",
                   },
-                  supportsImageGeneration: {
-                    type: "boolean",
+                  hookCommands: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        command: {
+                          type: "string",
+                        },
+                        timeout: {
+                          type: "number",
+                        },
+                      },
+                      additionalProperties: false,
+                      required: ["command"],
+                    },
                   },
-                  tier: {
-                    enum: ["standard", "premium", "overage"],
+                  hookStatus: {
+                    enum: ["executing", "completed", "error"],
                   },
-                  tokenMultiplier: {
+                  hookResults: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        exitCode: {
+                          type: "number",
+                        },
+                        stdout: {
+                          type: "string",
+                        },
+                        stderr: {
+                          type: "string",
+                        },
+                        suppressOutput: {
+                          type: "boolean",
+                        },
+                      },
+                      additionalProperties: false,
+                      required: ["exitCode", "stdout", "stderr"],
+                    },
+                  },
+                  hookToolCallId: {
+                    type: "string",
+                  },
+                  hookParentId: {
+                    type: "string",
+                  },
+                  hookOrder: {
                     type: "number",
                   },
-                  promoLabel: {
-                    type: "string",
-                  },
-                  kind: {
-                    enum: ["concrete", "router"],
-                  },
-                  variantBadge: {
-                    type: "string",
-                  },
-                  isNew: {
+                  hookPreventedAction: {
                     type: "boolean",
+                  },
+                  hiddenFromUserViews: {
+                    type: "boolean",
+                  },
+                  hookStartTime: {
+                    type: "number",
+                  },
+                  hookEndTime: {
+                    type: "number",
+                  },
+                  isParallelExecution: {
+                    type: "boolean",
+                  },
+                  parallelGroupId: {
+                    type: "string",
+                  },
+                },
+                additionalProperties: false,
+                required: ["id", "role", "content", "createdAt", "updatedAt"],
+              },
+            },
+            title: {
+              type: "string",
+            },
+          },
+          additionalProperties: false,
+          required: ["messages"],
+        },
+        agentTurnOutcome: {
+          anyOf: [
+            {
+              type: "object",
+              properties: {
+                type: {
+                  const: "agent_turn_outcome",
+                },
+                turnId: {
+                  type: "string",
+                },
+                reason: {
+                  enum: [
+                    "completed",
+                    "cancelled",
+                    "permission_rejected",
+                    "error",
+                    "process_exit",
+                    "spec_handoff",
+                    "structured_output_missing",
+                    "structured_output_invalid",
+                    "structured_output_schema_invalid",
+                    "model_usage_exhausted",
+                    "model_authentication_failed",
+                    "model_request_rejected",
+                    "model_provider_unreachable",
+                    "model_provider_unavailable",
+                    "model_rate_limited",
+                    "prompt_rejected",
+                    "completion_persistence_failed",
+                    "no_approver_available",
+                  ],
+                },
+                resultKind: {
+                  const: "structured",
+                },
+                result: {
+                  type: "object",
+                  additionalProperties: {},
+                },
+                schemaFingerprint: {
+                  type: "string",
+                },
+              },
+              additionalProperties: false,
+              required: ["type", "turnId", "reason", "resultKind", "result", "schemaFingerprint"],
+            },
+            {
+              type: "object",
+              properties: {
+                type: {
+                  const: "agent_turn_outcome",
+                },
+                turnId: {
+                  type: "string",
+                },
+                reason: {
+                  enum: [
+                    "completed",
+                    "cancelled",
+                    "permission_rejected",
+                    "error",
+                    "process_exit",
+                    "spec_handoff",
+                    "structured_output_missing",
+                    "structured_output_invalid",
+                    "structured_output_schema_invalid",
+                    "model_usage_exhausted",
+                    "model_authentication_failed",
+                    "model_request_rejected",
+                    "model_provider_unreachable",
+                    "model_provider_unavailable",
+                    "model_rate_limited",
+                    "prompt_rejected",
+                    "completion_persistence_failed",
+                    "no_approver_available",
+                  ],
+                },
+                resultKind: {
+                  const: "text",
+                },
+              },
+              additionalProperties: false,
+              required: ["type", "turnId", "reason", "resultKind"],
+            },
+            {
+              type: "object",
+              properties: {
+                type: {
+                  const: "agent_turn_outcome",
+                },
+                turnId: {
+                  type: "string",
+                },
+                reason: {
+                  enum: [
+                    "completed",
+                    "cancelled",
+                    "permission_rejected",
+                    "error",
+                    "process_exit",
+                    "spec_handoff",
+                    "structured_output_missing",
+                    "structured_output_invalid",
+                    "structured_output_schema_invalid",
+                    "model_usage_exhausted",
+                    "model_authentication_failed",
+                    "model_request_rejected",
+                    "model_provider_unreachable",
+                    "model_provider_unavailable",
+                    "model_rate_limited",
+                    "prompt_rejected",
+                    "completion_persistence_failed",
+                    "no_approver_available",
+                  ],
+                },
+                resultKind: {
+                  const: "null",
+                },
+              },
+              additionalProperties: false,
+              required: ["type", "turnId", "reason", "resultKind"],
+            },
+          ],
+        },
+        hasOlderMessages: {
+          type: "boolean",
+        },
+        loopState: {
+          type: "object",
+          properties: {
+            loopId: {
+              type: "string",
+            },
+            status: {
+              enum: ["waiting", "running", "due", "stopped", "error"],
+            },
+            intervalMs: {
+              type: "number",
+            },
+            iteration: {
+              type: "number",
+            },
+            startedAt: {
+              type: "number",
+            },
+            updatedAt: {
+              type: "number",
+            },
+            nextRunAt: {
+              type: "number",
+            },
+            isDue: {
+              type: "boolean",
+            },
+            lastRunStartedAt: {
+              type: "number",
+            },
+            lastRunCompletedAt: {
+              type: "number",
+            },
+            stopReason: {
+              enum: [
+                "user_stopped",
+                "manual_message",
+                "interrupted",
+                "session_closed",
+                "process_exited",
+                "error",
+              ],
+            },
+          },
+          additionalProperties: false,
+          required: [
+            "loopId",
+            "status",
+            "intervalMs",
+            "iteration",
+            "startedAt",
+            "updatedAt",
+            "nextRunAt",
+            "isDue",
+          ],
+        },
+        hostId: {
+          type: "string",
+        },
+        mcpServers: {
+          type: "array",
+          items: {
+            anyOf: [
+              {
+                type: "object",
+                properties: {
+                  name: {
+                    type: "string",
+                  },
+                  command: {
+                    type: "string",
+                  },
+                  args: {
+                    type: "array",
+                    items: {
+                      type: "string",
+                    },
+                  },
+                  env: {
+                    type: "object",
+                    additionalProperties: {
+                      type: "string",
+                    },
+                  },
+                },
+                additionalProperties: false,
+                required: ["name", "command"],
+              },
+              {
+                type: "object",
+                properties: {
+                  type: {
+                    const: "http",
+                  },
+                  name: {
+                    type: "string",
+                  },
+                  url: {
+                    type: "string",
+                  },
+                  headers: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        name: {
+                          type: "string",
+                        },
+                        value: {
+                          type: "string",
+                        },
+                      },
+                      additionalProperties: false,
+                      required: ["name", "value"],
+                    },
+                  },
+                  oauth: {
+                    anyOf: [
+                      {
+                        const: false,
+                      },
+                      {
+                        type: "object",
+                        properties: {
+                          scopes: {
+                            type: "array",
+                            items: {
+                              type: "string",
+                            },
+                          },
+                          resource: {
+                            anyOf: [
+                              {
+                                type: "string",
+                              },
+                              {
+                                const: false,
+                              },
+                            ],
+                          },
+                          authorizationServerIssuer: {
+                            type: "string",
+                          },
+                          clientMetadataUrl: {
+                            type: "string",
+                          },
+                          clientId: {
+                            type: "string",
+                          },
+                          clientSecret: {
+                            type: "string",
+                          },
+                          callbackPort: {
+                            type: "number",
+                          },
+                          tokenEndpointAuthMethod: {
+                            enum: ["none", "client_secret_basic", "client_secret_post"],
+                          },
+                        },
+                        additionalProperties: false,
+                      },
+                    ],
+                  },
+                },
+                additionalProperties: false,
+                required: ["type", "name", "url"],
+              },
+              {
+                type: "object",
+                properties: {
+                  type: {
+                    const: "sse",
+                  },
+                  name: {
+                    type: "string",
+                  },
+                  url: {
+                    type: "string",
+                  },
+                  headers: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        name: {
+                          type: "string",
+                        },
+                        value: {
+                          type: "string",
+                        },
+                      },
+                      additionalProperties: false,
+                      required: ["name", "value"],
+                    },
+                  },
+                  oauth: {
+                    anyOf: [
+                      {
+                        const: false,
+                      },
+                      {
+                        type: "object",
+                        properties: {
+                          scopes: {
+                            type: "array",
+                            items: {
+                              type: "string",
+                            },
+                          },
+                          resource: {
+                            anyOf: [
+                              {
+                                type: "string",
+                              },
+                              {
+                                const: false,
+                              },
+                            ],
+                          },
+                          authorizationServerIssuer: {
+                            type: "string",
+                          },
+                          clientMetadataUrl: {
+                            type: "string",
+                          },
+                          clientId: {
+                            type: "string",
+                          },
+                          clientSecret: {
+                            type: "string",
+                          },
+                          callbackPort: {
+                            type: "number",
+                          },
+                          tokenEndpointAuthMethod: {
+                            enum: ["none", "client_secret_basic", "client_secret_post"],
+                          },
+                        },
+                        additionalProperties: false,
+                      },
+                    ],
+                  },
+                },
+                additionalProperties: false,
+                required: ["type", "name", "url"],
+              },
+            ],
+          },
+        },
+        pendingPermissions: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              toolUses: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    toolUse: {
+                      type: "object",
+                      properties: {
+                        type: {
+                          const: "tool_use",
+                        },
+                        id: {
+                          type: "string",
+                        },
+                        input: {
+                          type: "object",
+                          additionalProperties: {},
+                        },
+                        name: {
+                          type: "string",
+                        },
+                        thoughtSignature: {
+                          type: "string",
+                        },
+                        namespace: {
+                          type: "string",
+                        },
+                        scriptExecution: {
+                          type: "object",
+                          properties: {
+                            runId: {
+                              type: "string",
+                            },
+                            outerToolUseId: {
+                              type: "string",
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["runId", "outerToolUseId"],
+                        },
+                      },
+                      additionalProperties: false,
+                      required: ["type", "id", "input", "name"],
+                    },
+                    confirmationType: {
+                      enum: [
+                        "edit",
+                        "exec",
+                        "create",
+                        "ask_user",
+                        "exit_spec_mode",
+                        "recommend_mission",
+                        "propose_mission",
+                        "start_mission_run",
+                        "apply_patch",
+                        "mcp_tool",
+                        "sandbox_violation",
+                        "droid_shield_violation",
+                        "script",
+                      ],
+                    },
+                    details: {
+                      anyOf: [
+                        {
+                          type: "object",
+                          properties: {
+                            type: {
+                              const: "edit",
+                            },
+                            filePath: {
+                              type: "string",
+                            },
+                            fileName: {
+                              type: "string",
+                            },
+                            oldContent: {
+                              type: "string",
+                            },
+                            newContent: {
+                              type: "string",
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "filePath", "fileName"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            type: {
+                              const: "exec",
+                            },
+                            fullCommand: {
+                              type: "string",
+                            },
+                            command: {
+                              type: "string",
+                            },
+                            extractedCommands: {
+                              type: "array",
+                              items: {
+                                type: "string",
+                              },
+                            },
+                            impactLevel: {
+                              type: "string",
+                            },
+                            riskLevelReason: {
+                              type: "string",
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "fullCommand", "command"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            type: {
+                              const: "create",
+                            },
+                            filePath: {
+                              type: "string",
+                            },
+                            fileName: {
+                              type: "string",
+                            },
+                            content: {
+                              type: "string",
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "filePath", "fileName", "content"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            type: {
+                              const: "ask_user",
+                            },
+                            questionnaire: {
+                              type: "string",
+                            },
+                            parsed: {
+                              type: "object",
+                              properties: {
+                                questions: {
+                                  type: "array",
+                                  items: {
+                                    type: "object",
+                                    properties: {
+                                      index: {
+                                        type: "number",
+                                      },
+                                      topic: {
+                                        type: "string",
+                                      },
+                                      question: {
+                                        type: "string",
+                                      },
+                                      options: {
+                                        type: "array",
+                                        items: {
+                                          type: "string",
+                                        },
+                                      },
+                                      multiSelect: {
+                                        type: "boolean",
+                                      },
+                                    },
+                                    additionalProperties: false,
+                                    required: ["index", "topic", "question", "options"],
+                                  },
+                                },
+                              },
+                              additionalProperties: false,
+                              required: ["questions"],
+                            },
+                            parseError: {
+                              type: "object",
+                              properties: {
+                                message: {
+                                  type: "string",
+                                },
+                                line: {
+                                  type: "number",
+                                },
+                              },
+                              additionalProperties: false,
+                              required: ["message"],
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "questionnaire"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            type: {
+                              const: "exit_spec_mode",
+                            },
+                            plan: {
+                              type: "string",
+                            },
+                            title: {
+                              type: "string",
+                            },
+                            contextSavingsPercent: {
+                              type: "number",
+                            },
+                            supportsClientStartedHandoff: {
+                              type: "boolean",
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "plan"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            type: {
+                              const: "propose_mission",
+                            },
+                            proposal: {
+                              type: "string",
+                            },
+                            title: {
+                              type: "string",
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "proposal"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            type: {
+                              const: "start_mission_run",
+                            },
+                            runningMissionCount: {
+                              type: "number",
+                            },
+                            runningMissionSessionIds: {
+                              type: "array",
+                              items: {
+                                type: "string",
+                              },
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "runningMissionCount", "runningMissionSessionIds"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            type: {
+                              const: "apply_patch",
+                            },
+                            filePath: {
+                              type: "string",
+                            },
+                            fileName: {
+                              type: "string",
+                            },
+                            patchContent: {
+                              type: "string",
+                            },
+                            oldContent: {
+                              type: "string",
+                            },
+                            newContent: {
+                              type: "string",
+                            },
+                            files: {
+                              type: "array",
+                              items: {
+                                type: "object",
+                                properties: {
+                                  filePath: {
+                                    type: "string",
+                                  },
+                                  fileName: {
+                                    type: "string",
+                                  },
+                                  operation: {
+                                    enum: ["create", "update", "delete"],
+                                  },
+                                  moveTo: {
+                                    type: "string",
+                                  },
+                                  oldContent: {
+                                    type: "string",
+                                  },
+                                  newContent: {
+                                    type: "string",
+                                  },
+                                },
+                                additionalProperties: false,
+                                required: ["filePath", "fileName", "operation"],
+                              },
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "filePath", "fileName", "patchContent"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            type: {
+                              const: "mcp_tool",
+                            },
+                            toolName: {
+                              type: "string",
+                            },
+                            impactLevel: {
+                              type: "string",
+                            },
+                            serverName: {
+                              type: "string",
+                            },
+                            actualToolName: {
+                              type: "string",
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "toolName", "impactLevel"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            type: {
+                              const: "sandbox_violation",
+                            },
+                            violatingToolName: {
+                              type: "string",
+                            },
+                            target: {
+                              type: "string",
+                            },
+                            operationType: {
+                              enum: ["read", "write", "network", "tool"],
+                            },
+                            violationType: {
+                              enum: ["filesystem-read", "filesystem-write", "network", "tool"],
+                            },
+                            reason: {
+                              type: "string",
+                            },
+                            violationReason: {
+                              enum: ["deny-list", "not-allowed"],
+                            },
+                            isOrgDeny: {
+                              type: "boolean",
+                            },
+                          },
+                          additionalProperties: false,
+                          required: [
+                            "type",
+                            "violatingToolName",
+                            "target",
+                            "operationType",
+                            "violationType",
+                            "reason",
+                            "isOrgDeny",
+                          ],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            type: {
+                              const: "droid_shield_violation",
+                            },
+                            command: {
+                              type: "string",
+                            },
+                            reason: {
+                              type: "string",
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "command", "reason"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            type: {
+                              const: "recommend_mission",
+                            },
+                            reason: {
+                              type: "string",
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "reason"],
+                        },
+                        {
+                          type: "object",
+                          properties: {
+                            type: {
+                              const: "script",
+                            },
+                            impactLevel: {
+                              type: "string",
+                            },
+                            calls: {
+                              type: "array",
+                              items: {
+                                type: "object",
+                                properties: {
+                                  toolName: {
+                                    type: "string",
+                                  },
+                                  line: {
+                                    type: "number",
+                                  },
+                                  column: {
+                                    type: "number",
+                                  },
+                                  toolInput: {
+                                    type: "object",
+                                    additionalProperties: {},
+                                  },
+                                  confirmation: {
+                                    anyOf: [
+                                      {
+                                        type: "object",
+                                        properties: {
+                                          type: {
+                                            const: "edit",
+                                          },
+                                          filePath: {
+                                            type: "string",
+                                          },
+                                          fileName: {
+                                            type: "string",
+                                          },
+                                          oldContent: {
+                                            type: "string",
+                                          },
+                                          newContent: {
+                                            type: "string",
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: ["type", "filePath", "fileName"],
+                                      },
+                                      {
+                                        type: "object",
+                                        properties: {
+                                          type: {
+                                            const: "exec",
+                                          },
+                                          fullCommand: {
+                                            type: "string",
+                                          },
+                                          command: {
+                                            type: "string",
+                                          },
+                                          extractedCommands: {
+                                            type: "array",
+                                            items: {
+                                              type: "string",
+                                            },
+                                          },
+                                          impactLevel: {
+                                            type: "string",
+                                          },
+                                          riskLevelReason: {
+                                            type: "string",
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: ["type", "fullCommand", "command"],
+                                      },
+                                      {
+                                        type: "object",
+                                        properties: {
+                                          type: {
+                                            const: "create",
+                                          },
+                                          filePath: {
+                                            type: "string",
+                                          },
+                                          fileName: {
+                                            type: "string",
+                                          },
+                                          content: {
+                                            type: "string",
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: ["type", "filePath", "fileName", "content"],
+                                      },
+                                      {
+                                        type: "object",
+                                        properties: {
+                                          type: {
+                                            const: "ask_user",
+                                          },
+                                          questionnaire: {
+                                            type: "string",
+                                          },
+                                          parsed: {
+                                            type: "object",
+                                            properties: {
+                                              questions: {
+                                                type: "array",
+                                                items: {
+                                                  type: "object",
+                                                  properties: {
+                                                    index: {
+                                                      type: "number",
+                                                    },
+                                                    topic: {
+                                                      type: "string",
+                                                    },
+                                                    question: {
+                                                      type: "string",
+                                                    },
+                                                    options: {
+                                                      type: "array",
+                                                      items: {
+                                                        type: "string",
+                                                      },
+                                                    },
+                                                    multiSelect: {
+                                                      type: "boolean",
+                                                    },
+                                                  },
+                                                  additionalProperties: false,
+                                                  required: [
+                                                    "index",
+                                                    "topic",
+                                                    "question",
+                                                    "options",
+                                                  ],
+                                                },
+                                              },
+                                            },
+                                            additionalProperties: false,
+                                            required: ["questions"],
+                                          },
+                                          parseError: {
+                                            type: "object",
+                                            properties: {
+                                              message: {
+                                                type: "string",
+                                              },
+                                              line: {
+                                                type: "number",
+                                              },
+                                            },
+                                            additionalProperties: false,
+                                            required: ["message"],
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: ["type", "questionnaire"],
+                                      },
+                                      {
+                                        type: "object",
+                                        properties: {
+                                          type: {
+                                            const: "exit_spec_mode",
+                                          },
+                                          plan: {
+                                            type: "string",
+                                          },
+                                          title: {
+                                            type: "string",
+                                          },
+                                          contextSavingsPercent: {
+                                            type: "number",
+                                          },
+                                          supportsClientStartedHandoff: {
+                                            type: "boolean",
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: ["type", "plan"],
+                                      },
+                                      {
+                                        type: "object",
+                                        properties: {
+                                          type: {
+                                            const: "propose_mission",
+                                          },
+                                          proposal: {
+                                            type: "string",
+                                          },
+                                          title: {
+                                            type: "string",
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: ["type", "proposal"],
+                                      },
+                                      {
+                                        type: "object",
+                                        properties: {
+                                          type: {
+                                            const: "start_mission_run",
+                                          },
+                                          runningMissionCount: {
+                                            type: "number",
+                                          },
+                                          runningMissionSessionIds: {
+                                            type: "array",
+                                            items: {
+                                              type: "string",
+                                            },
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: [
+                                          "type",
+                                          "runningMissionCount",
+                                          "runningMissionSessionIds",
+                                        ],
+                                      },
+                                      {
+                                        type: "object",
+                                        properties: {
+                                          type: {
+                                            const: "apply_patch",
+                                          },
+                                          filePath: {
+                                            type: "string",
+                                          },
+                                          fileName: {
+                                            type: "string",
+                                          },
+                                          patchContent: {
+                                            type: "string",
+                                          },
+                                          oldContent: {
+                                            type: "string",
+                                          },
+                                          newContent: {
+                                            type: "string",
+                                          },
+                                          files: {
+                                            type: "array",
+                                            items: {
+                                              type: "object",
+                                              properties: {
+                                                filePath: {
+                                                  type: "string",
+                                                },
+                                                fileName: {
+                                                  type: "string",
+                                                },
+                                                operation: {
+                                                  enum: ["create", "update", "delete"],
+                                                },
+                                                moveTo: {
+                                                  type: "string",
+                                                },
+                                                oldContent: {
+                                                  type: "string",
+                                                },
+                                                newContent: {
+                                                  type: "string",
+                                                },
+                                              },
+                                              additionalProperties: false,
+                                              required: ["filePath", "fileName", "operation"],
+                                            },
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: ["type", "filePath", "fileName", "patchContent"],
+                                      },
+                                      {
+                                        type: "object",
+                                        properties: {
+                                          type: {
+                                            const: "mcp_tool",
+                                          },
+                                          toolName: {
+                                            type: "string",
+                                          },
+                                          impactLevel: {
+                                            type: "string",
+                                          },
+                                          serverName: {
+                                            type: "string",
+                                          },
+                                          actualToolName: {
+                                            type: "string",
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: ["type", "toolName", "impactLevel"],
+                                      },
+                                      {
+                                        type: "object",
+                                        properties: {
+                                          type: {
+                                            const: "sandbox_violation",
+                                          },
+                                          violatingToolName: {
+                                            type: "string",
+                                          },
+                                          target: {
+                                            type: "string",
+                                          },
+                                          operationType: {
+                                            enum: ["read", "write", "network", "tool"],
+                                          },
+                                          violationType: {
+                                            enum: [
+                                              "filesystem-read",
+                                              "filesystem-write",
+                                              "network",
+                                              "tool",
+                                            ],
+                                          },
+                                          reason: {
+                                            type: "string",
+                                          },
+                                          violationReason: {
+                                            enum: ["deny-list", "not-allowed"],
+                                          },
+                                          isOrgDeny: {
+                                            type: "boolean",
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: [
+                                          "type",
+                                          "violatingToolName",
+                                          "target",
+                                          "operationType",
+                                          "violationType",
+                                          "reason",
+                                          "isOrgDeny",
+                                        ],
+                                      },
+                                      {
+                                        type: "object",
+                                        properties: {
+                                          type: {
+                                            const: "droid_shield_violation",
+                                          },
+                                          command: {
+                                            type: "string",
+                                          },
+                                          reason: {
+                                            type: "string",
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: ["type", "command", "reason"],
+                                      },
+                                      {
+                                        type: "object",
+                                        properties: {
+                                          type: {
+                                            const: "recommend_mission",
+                                          },
+                                          reason: {
+                                            type: "string",
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: ["type", "reason"],
+                                      },
+                                    ],
+                                  },
+                                  alwaysAsk: {
+                                    type: "boolean",
+                                  },
+                                },
+                                additionalProperties: false,
+                                required: [
+                                  "toolName",
+                                  "line",
+                                  "column",
+                                  "toolInput",
+                                  "confirmation",
+                                ],
+                              },
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "impactLevel", "calls"],
+                        },
+                      ],
+                    },
+                  },
+                  additionalProperties: false,
+                  required: ["toolUse", "confirmationType", "details"],
+                },
+              },
+              options: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    label: {
+                      type: "string",
+                    },
+                    value: {
+                      enum: [
+                        "proceed_once",
+                        "proceed_always",
+                        "proceed_always_file",
+                        "proceed_auto_run",
+                        "proceed_auto_run_low",
+                        "proceed_auto_run_medium",
+                        "proceed_auto_run_high",
+                        "proceed_new_session",
+                        "proceed_new_session_low",
+                        "proceed_new_session_medium",
+                        "proceed_new_session_high",
+                        "proceed_edit",
+                        "proceed_always_tools",
+                        "proceed_always_server",
+                        "proceed_report_false_positive",
+                        "cancel",
+                      ],
+                    },
+                  },
+                  additionalProperties: false,
+                  required: ["label", "value"],
+                },
+              },
+              associatedSessionIds: {
+                type: "array",
+                items: {
+                  type: "string",
+                },
+              },
+              requestId: {
+                type: "string",
+              },
+            },
+            additionalProperties: false,
+            required: ["toolUses", "options", "requestId"],
+          },
+        },
+        pendingAskUserRequests: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              toolCallId: {
+                type: "string",
+              },
+              questions: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    index: {
+                      type: "number",
+                    },
+                    topic: {
+                      type: "string",
+                    },
+                    question: {
+                      type: "string",
+                    },
+                    options: {
+                      type: "array",
+                      items: {
+                        type: "string",
+                      },
+                    },
+                    multiSelect: {
+                      type: "boolean",
+                    },
+                    workstreamProposal: {
+                      type: "object",
+                      properties: {
+                        requestId: {
+                          type: "string",
+                        },
+                        sessionId: {
+                          type: "string",
+                        },
+                        title: {
+                          type: "string",
+                        },
+                        goal: {
+                          type: "string",
+                        },
+                        driUserId: {
+                          type: "string",
+                        },
+                        owningTeamId: {
+                          type: "string",
+                        },
+                        serviceAccountId: {
+                          type: "string",
+                        },
+                        machineId: {
+                          type: "string",
+                        },
+                        executionTemplateId: {
+                          type: "string",
+                        },
+                        environmentId: {
+                          type: "string",
+                        },
+                        repos: {
+                          type: "array",
+                          items: {
+                            type: "string",
+                          },
+                        },
+                        connectors: {
+                          type: "array",
+                          items: {
+                            type: "string",
+                          },
+                        },
+                      },
+                      additionalProperties: false,
+                      required: [
+                        "requestId",
+                        "sessionId",
+                        "title",
+                        "goal",
+                        "driUserId",
+                        "repos",
+                        "connectors",
+                      ],
+                    },
+                  },
+                  additionalProperties: false,
+                  required: ["index", "topic", "question", "options"],
+                },
+              },
+              requestId: {
+                type: "string",
+              },
+            },
+            additionalProperties: false,
+            required: ["toolCallId", "questions", "requestId"],
+          },
+        },
+        pendingPickOptionsRequests: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              toolCallId: {
+                type: "string",
+              },
+              title: {
+                type: "string",
+              },
+              hint: {
+                type: "string",
+              },
+              emptyText: {
+                type: "string",
+              },
+              rows: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    id: {
+                      type: "string",
+                    },
+                    label: {
+                      type: "string",
+                    },
+                    detail: {
+                      type: "string",
+                    },
+                  },
+                  additionalProperties: false,
+                  required: ["id", "label"],
+                },
+              },
+              multi: {
+                type: "boolean",
+              },
+              preselectedIds: {
+                type: "array",
+                items: {
+                  type: "string",
+                },
+              },
+              initialSearch: {
+                type: "string",
+              },
+              requestId: {
+                type: "string",
+              },
+            },
+            additionalProperties: false,
+            required: ["toolCallId", "title", "rows", "multi", "preselectedIds", "requestId"],
+          },
+        },
+        isAgentLoopInProgress: {
+          type: "boolean",
+        },
+        pendingMessageRequestIds: {
+          type: "array",
+          items: {
+            type: "string",
+          },
+        },
+        workingState: {
+          enum: [
+            "idle",
+            "thinking",
+            "streaming_assistant_message",
+            "waiting_for_tool_confirmation",
+            "executing_tool",
+            "compacting_conversation",
+          ],
+        },
+        queuedMessages: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              messageId: {
+                type: "string",
+              },
+              text: {
+                type: "string",
+              },
+              content: {
+                type: "array",
+                items: {
+                  anyOf: [
+                    {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "string",
+                        },
+                        type: {
+                          const: "text",
+                        },
+                        text: {
+                          type: "string",
+                        },
+                      },
+                      additionalProperties: false,
+                      required: ["type", "text"],
+                    },
+                    {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "string",
+                        },
+                        type: {
+                          const: "image",
+                        },
+                        source: {
+                          type: "object",
+                          properties: {
+                            type: {
+                              const: "base64",
+                            },
+                            data: {
+                              type: "string",
+                            },
+                            mediaType: {
+                              enum: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "data", "mediaType"],
+                        },
+                        generated: {
+                          type: "boolean",
+                        },
+                      },
+                      additionalProperties: false,
+                      required: ["type", "source"],
+                    },
+                  ],
+                },
+              },
+              images: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    type: {
+                      const: "base64",
+                    },
+                    data: {
+                      type: "string",
+                    },
+                    mediaType: {
+                      enum: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+                    },
+                  },
+                  additionalProperties: false,
+                  required: ["type", "data", "mediaType"],
+                },
+              },
+              imagePaths: {
+                type: "array",
+                items: {
+                  type: "string",
+                },
+              },
+              files: {
+                type: "array",
+                items: {
+                  anyOf: [
+                    {
+                      type: "object",
+                      properties: {
+                        type: {
+                          const: "base64",
+                        },
+                        mediaType: {
+                          const: "application/pdf",
+                        },
+                        data: {
+                          type: "string",
+                        },
+                        parsedData: {
+                          type: "string",
+                        },
+                        name: {
+                          type: "string",
+                        },
+                        path: {
+                          type: "string",
+                        },
+                      },
+                      additionalProperties: false,
+                      required: ["type", "mediaType", "data"],
+                    },
+                    {
+                      type: "object",
+                      properties: {
+                        type: {
+                          const: "text",
+                        },
+                        mediaType: {
+                          const: "text/plain",
+                        },
+                        data: {
+                          type: "string",
+                        },
+                        name: {
+                          type: "string",
+                        },
+                        mime: {
+                          type: "string",
+                        },
+                      },
+                      additionalProperties: false,
+                      required: ["type", "mediaType", "data"],
+                    },
+                  ],
+                },
+              },
+              outputFormat: {
+                type: "object",
+                properties: {
+                  type: {
+                    const: "json_schema",
+                  },
+                  schema: {
+                    type: "object",
+                    additionalProperties: {},
+                  },
+                },
+                additionalProperties: false,
+                required: ["type", "schema"],
+              },
+              skipAgentLoop: {
+                type: "boolean",
+              },
+              queuePlacement: {
+                enum: ["end_of_turn", "end_of_loop"],
+              },
+              role: {
+                enum: ["user", "assistant", "tool", "system"],
+              },
+              visibility: {
+                enum: ["both", "llm_only", "user_only"],
+              },
+              userMessageSource: {
+                enum: [
+                  "web",
+                  "desktop",
+                  "cli_tui",
+                  "cli_exec",
+                  "cli_acp",
+                  "slack",
+                  "jira",
+                  "linear",
+                  "microsoft-teams",
+                  "google-chat",
+                  "sessions_api",
+                  "api",
+                  "sdk",
+                  "automation",
+                  "readiness-remediation",
+                  "readiness-evaluation",
+                  "wiki-generation",
+                  "wiki-ci-setup",
+                ],
+              },
+              sender: {
+                anyOf: [
+                  {
+                    type: "object",
+                    properties: {
+                      kind: {
+                        const: "orchestrator",
+                      },
+                      sessionId: {
+                        type: "string",
+                      },
+                    },
+                    additionalProperties: false,
+                    required: ["kind", "sessionId"],
+                  },
+                  {
+                    type: "object",
+                    properties: {
+                      kind: {
+                        const: "agent",
+                      },
+                      title: {
+                        type: "string",
+                      },
+                      sessionId: {
+                        type: "string",
+                      },
+                    },
+                    additionalProperties: false,
+                    required: ["kind", "title", "sessionId"],
+                  },
+                ],
+              },
+              author: {
+                type: "object",
+                properties: {
+                  userId: {
+                    type: "string",
+                  },
+                  name: {
+                    type: "string",
+                  },
+                },
+                additionalProperties: false,
+                required: ["userId"],
+              },
+              chatSettingsCatalog: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    operationId: {
+                      type: "string",
+                    },
+                    pageId: {
+                      type: "string",
+                    },
+                    section: {
+                      type: "string",
+                    },
+                    label: {
+                      type: "string",
+                    },
+                    description: {
+                      type: "string",
+                    },
+                    kind: {
+                      enum: ["setting", "resource", "account"],
+                    },
+                    riskLevel: {
+                      enum: ["low", "medium", "high"],
+                    },
+                    inputSchema: {
+                      type: "object",
+                      properties: {
+                        type: {
+                          const: "object",
+                        },
+                        properties: {
+                          type: "object",
+                          additionalProperties: {},
+                        },
+                        required: {
+                          type: "array",
+                          items: {
+                            type: "string",
+                          },
+                        },
+                        additionalProperties: {
+                          type: "boolean",
+                        },
+                      },
+                      additionalProperties: false,
+                      required: ["type", "properties"],
+                    },
+                  },
+                  additionalProperties: false,
+                  required: [
+                    "operationId",
+                    "pageId",
+                    "section",
+                    "label",
+                    "description",
+                    "kind",
+                    "riskLevel",
+                    "inputSchema",
+                  ],
+                },
+              },
+              requestId: {
+                type: "string",
+              },
+            },
+            additionalProperties: false,
+            required: ["text", "requestId"],
+          },
+        },
+        gitRepo: {
+          type: "object",
+          properties: {
+            owner: {
+              type: "string",
+            },
+            repoName: {
+              type: "string",
+            },
+          },
+          additionalProperties: false,
+          required: ["repoName"],
+        },
+        cwd: {
+          type: "string",
+        },
+        updatedAt: {
+          type: "number",
+        },
+        callingSessionId: {
+          type: "string",
+        },
+        callingToolUseId: {
+          type: "string",
+        },
+        availableModels: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              id: {
+                type: "string",
+              },
+              displayName: {
+                type: "string",
+              },
+              shortDisplayName: {
+                type: "string",
+              },
+              modelProvider: {
+                enum: [
+                  "anthropic",
+                  "openai",
+                  "generic-chat-completion-api",
+                  "factory",
+                  "google",
+                  "xai",
+                  "bedrock-converse",
+                ],
+              },
+              supportedReasoningEfforts: {
+                type: "array",
+                items: {
+                  enum: [
+                    "none",
+                    "dynamic",
+                    "off",
+                    "minimal",
+                    "low",
+                    "medium",
+                    "high",
+                    "xhigh",
+                    "max",
+                  ],
+                },
+              },
+              defaultReasoningEffort: {
+                enum: [
+                  "none",
+                  "dynamic",
+                  "off",
+                  "minimal",
+                  "low",
+                  "medium",
+                  "high",
+                  "xhigh",
+                  "max",
+                ],
+              },
+              isCustom: {
+                type: "boolean",
+              },
+              noImageSupport: {
+                type: "boolean",
+              },
+              supportsImageGeneration: {
+                type: "boolean",
+              },
+              tier: {
+                enum: ["standard", "premium", "overage"],
+              },
+              tokenMultiplier: {
+                type: "number",
+              },
+              promoLabel: {
+                type: "string",
+              },
+              kind: {
+                enum: ["concrete", "router"],
+              },
+              variantBadge: {
+                type: "string",
+              },
+              isNew: {
+                type: "boolean",
+              },
+            },
+            additionalProperties: false,
+            required: [
+              "id",
+              "displayName",
+              "shortDisplayName",
+              "modelProvider",
+              "supportedReasoningEfforts",
+              "defaultReasoningEffort",
+            ],
+          },
+        },
+        tokenUsage: {
+          type: "object",
+          properties: {
+            inputTokens: {
+              type: "number",
+            },
+            outputTokens: {
+              type: "number",
+            },
+            cacheCreationTokens: {
+              type: "number",
+            },
+            cacheReadTokens: {
+              type: "number",
+            },
+            thinkingTokens: {
+              type: "number",
+            },
+            factoryCredits: {
+              type: "number",
+            },
+          },
+          additionalProperties: false,
+          required: [
+            "inputTokens",
+            "outputTokens",
+            "cacheCreationTokens",
+            "cacheReadTokens",
+            "thinkingTokens",
+          ],
+        },
+        inclusiveTokenUsage: {
+          type: "object",
+          properties: {
+            inputTokens: {
+              type: "number",
+            },
+            outputTokens: {
+              type: "number",
+            },
+            cacheCreationTokens: {
+              type: "number",
+            },
+            cacheReadTokens: {
+              type: "number",
+            },
+            thinkingTokens: {
+              type: "number",
+            },
+            factoryCredits: {
+              type: "number",
+            },
+          },
+          additionalProperties: false,
+          required: [
+            "inputTokens",
+            "outputTokens",
+            "cacheCreationTokens",
+            "cacheReadTokens",
+            "thinkingTokens",
+          ],
+        },
+        lastCallTokenUsage: {
+          type: "object",
+          properties: {
+            inputTokens: {
+              type: "number",
+            },
+            cacheReadTokens: {
+              type: "number",
+            },
+            outputTokens: {
+              type: "number",
+            },
+          },
+          additionalProperties: false,
+          required: ["inputTokens", "cacheReadTokens"],
+        },
+        mission: {
+          type: "object",
+          properties: {
+            state: {
+              enum: [
+                "planning",
+                "awaiting_input",
+                "initializing",
+                "running",
+                "paused",
+                "orchestrator_turn",
+                "completed",
+              ],
+            },
+            updatedAt: {
+              type: "string",
+            },
+            title: {
+              type: "string",
+            },
+            workingDirectory: {
+              type: "string",
+            },
+            features: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  id: {
+                    type: "string",
+                  },
+                  description: {
+                    type: "string",
+                  },
+                  status: {
+                    enum: ["pending", "in_progress", "completed", "cancelled"],
+                  },
+                  skillName: {
+                    type: "string",
+                  },
+                  preconditions: {
+                    type: "array",
+                    items: {
+                      type: "string",
+                    },
+                  },
+                  expectedBehavior: {
+                    type: "array",
+                    items: {
+                      type: "string",
+                    },
+                  },
+                  fulfills: {
+                    type: "array",
+                    items: {
+                      type: "string",
+                    },
+                  },
+                  milestone: {
+                    type: "string",
+                  },
+                  workerSessionIds: {
+                    type: "array",
+                    items: {
+                      type: "string",
+                    },
+                  },
+                  currentWorkerSessionId: {
+                    type: "string",
+                  },
+                  completedWorkerSessionId: {
+                    type: "string",
                   },
                 },
                 additionalProperties: false,
                 required: [
                   "id",
-                  "displayName",
-                  "shortDisplayName",
-                  "modelProvider",
-                  "supportedReasoningEfforts",
-                  "defaultReasoningEffort",
+                  "description",
+                  "status",
+                  "skillName",
+                  "preconditions",
+                  "expectedBehavior",
                 ],
+              },
+            },
+            progressLog: {
+              type: "array",
+              items: {
+                anyOf: [
+                  {
+                    type: "object",
+                    properties: {
+                      timestamp: {
+                        type: "string",
+                      },
+                      type: {
+                        const: "mission_accepted",
+                      },
+                      title: {
+                        type: "string",
+                      },
+                    },
+                    additionalProperties: false,
+                    required: ["timestamp", "type", "title"],
+                  },
+                  {
+                    type: "object",
+                    properties: {
+                      timestamp: {
+                        type: "string",
+                      },
+                      type: {
+                        const: "mission_paused",
+                      },
+                      pauseReason: {
+                        enum: [
+                          "unrecoverable_usage_402",
+                          "feature_retry_limit_exceeded",
+                          "scope_growth_limit_exceeded",
+                        ],
+                      },
+                    },
+                    additionalProperties: false,
+                    required: ["timestamp", "type"],
+                  },
+                  {
+                    type: "object",
+                    properties: {
+                      timestamp: {
+                        type: "string",
+                      },
+                      type: {
+                        const: "mission_resumed",
+                      },
+                      resumeWorkerSessionId: {
+                        type: "string",
+                      },
+                    },
+                    additionalProperties: false,
+                    required: ["timestamp", "type"],
+                  },
+                  {
+                    type: "object",
+                    properties: {
+                      timestamp: {
+                        type: "string",
+                      },
+                      type: {
+                        const: "mission_run_started",
+                      },
+                      message: {
+                        type: "string",
+                      },
+                    },
+                    additionalProperties: false,
+                    required: ["timestamp", "type"],
+                  },
+                  {
+                    type: "object",
+                    properties: {
+                      timestamp: {
+                        type: "string",
+                      },
+                      type: {
+                        const: "worker_started",
+                      },
+                      workerSessionId: {
+                        type: "string",
+                      },
+                      spawnId: {
+                        type: "string",
+                      },
+                      featureId: {
+                        type: "string",
+                      },
+                      modelId: {
+                        type: "string",
+                      },
+                      substitutedFromModelId: {
+                        type: "string",
+                      },
+                    },
+                    additionalProperties: false,
+                    required: ["timestamp", "type", "workerSessionId", "spawnId"],
+                  },
+                  {
+                    type: "object",
+                    properties: {
+                      timestamp: {
+                        type: "string",
+                      },
+                      type: {
+                        const: "worker_selected_feature",
+                      },
+                      workerSessionId: {
+                        type: "string",
+                      },
+                      featureId: {
+                        type: "string",
+                      },
+                    },
+                    additionalProperties: false,
+                    required: ["timestamp", "type", "workerSessionId", "featureId"],
+                  },
+                  {
+                    type: "object",
+                    properties: {
+                      timestamp: {
+                        type: "string",
+                      },
+                      type: {
+                        const: "worker_completed",
+                      },
+                      workerSessionId: {
+                        type: "string",
+                      },
+                      featureId: {
+                        type: "string",
+                      },
+                      successState: {
+                        enum: ["success", "partial", "failure"],
+                      },
+                      returnToOrchestrator: {
+                        type: "boolean",
+                      },
+                      commitId: {
+                        type: "string",
+                      },
+                      repoPath: {
+                        type: "string",
+                      },
+                      exitCode: {
+                        type: "number",
+                      },
+                      validatorsPassed: {
+                        type: "boolean",
+                      },
+                      handoff: {
+                        type: "object",
+                        properties: {
+                          salientSummary: {
+                            type: "string",
+                          },
+                          whatWasImplemented: {
+                            type: "string",
+                          },
+                          whatWasLeftUndone: {
+                            type: "string",
+                          },
+                          verification: {
+                            type: "object",
+                            properties: {
+                              commandsRun: {
+                                type: "array",
+                                items: {
+                                  type: "object",
+                                  properties: {
+                                    command: {
+                                      type: "string",
+                                    },
+                                    exitCode: {
+                                      type: "number",
+                                    },
+                                    observation: {
+                                      type: "string",
+                                    },
+                                  },
+                                  additionalProperties: false,
+                                  required: ["command", "exitCode", "observation"],
+                                },
+                              },
+                              interactiveChecks: {
+                                type: "array",
+                                items: {
+                                  type: "object",
+                                  properties: {
+                                    action: {
+                                      type: "string",
+                                    },
+                                    observed: {
+                                      type: "string",
+                                    },
+                                  },
+                                  additionalProperties: false,
+                                  required: ["action", "observed"],
+                                },
+                              },
+                            },
+                            additionalProperties: false,
+                            required: ["commandsRun"],
+                          },
+                          tests: {
+                            type: "object",
+                            properties: {
+                              added: {
+                                type: "array",
+                                items: {
+                                  type: "object",
+                                  properties: {
+                                    file: {
+                                      type: "string",
+                                    },
+                                    cases: {
+                                      type: "array",
+                                      items: {
+                                        type: "object",
+                                        properties: {
+                                          name: {
+                                            type: "string",
+                                          },
+                                          verifies: {
+                                            type: "string",
+                                          },
+                                        },
+                                        additionalProperties: false,
+                                        required: ["name", "verifies"],
+                                      },
+                                    },
+                                  },
+                                  additionalProperties: false,
+                                  required: ["file", "cases"],
+                                },
+                              },
+                              updated: {
+                                type: "array",
+                                items: {
+                                  type: "string",
+                                },
+                              },
+                              coverage: {
+                                type: "string",
+                              },
+                            },
+                            additionalProperties: false,
+                            required: ["added", "coverage"],
+                          },
+                          discoveredIssues: {
+                            type: "array",
+                            items: {
+                              type: "object",
+                              properties: {
+                                severity: {
+                                  enum: ["blocking", "non_blocking", "suggestion"],
+                                },
+                                description: {
+                                  type: "string",
+                                },
+                                suggestedFix: {
+                                  type: "string",
+                                },
+                              },
+                              additionalProperties: false,
+                              required: ["severity", "description"],
+                            },
+                          },
+                          skillFeedback: {
+                            type: "object",
+                            properties: {
+                              followedProcedure: {
+                                type: "boolean",
+                              },
+                              deviations: {
+                                type: "array",
+                                items: {
+                                  type: "object",
+                                  properties: {
+                                    step: {
+                                      type: "string",
+                                    },
+                                    whatIDidInstead: {
+                                      type: "string",
+                                    },
+                                    why: {
+                                      type: "string",
+                                    },
+                                  },
+                                  additionalProperties: false,
+                                  required: ["step", "whatIDidInstead", "why"],
+                                },
+                              },
+                              suggestedChanges: {
+                                type: "array",
+                                items: {
+                                  type: "string",
+                                },
+                              },
+                            },
+                            additionalProperties: false,
+                            required: ["followedProcedure", "deviations"],
+                          },
+                        },
+                        additionalProperties: false,
+                        required: [
+                          "whatWasImplemented",
+                          "whatWasLeftUndone",
+                          "verification",
+                          "tests",
+                          "discoveredIssues",
+                        ],
+                      },
+                    },
+                    additionalProperties: false,
+                    required: [
+                      "timestamp",
+                      "type",
+                      "workerSessionId",
+                      "featureId",
+                      "successState",
+                      "returnToOrchestrator",
+                      "exitCode",
+                    ],
+                  },
+                  {
+                    type: "object",
+                    properties: {
+                      timestamp: {
+                        type: "string",
+                      },
+                      type: {
+                        const: "worker_failed",
+                      },
+                      workerSessionId: {
+                        type: "string",
+                      },
+                      spawnId: {
+                        type: "string",
+                      },
+                      exitCode: {
+                        type: "number",
+                      },
+                      reason: {
+                        type: "string",
+                      },
+                      failureReason: {
+                        enum: ["unrecoverable_usage_402", "worker_exited_without_handoff"],
+                      },
+                    },
+                    additionalProperties: false,
+                    required: ["timestamp", "type", "spawnId", "reason"],
+                  },
+                  {
+                    type: "object",
+                    properties: {
+                      timestamp: {
+                        type: "string",
+                      },
+                      type: {
+                        const: "worker_paused",
+                      },
+                      workerSessionId: {
+                        type: "string",
+                      },
+                      featureId: {
+                        type: "string",
+                      },
+                    },
+                    additionalProperties: false,
+                    required: ["timestamp", "type", "workerSessionId"],
+                  },
+                  {
+                    type: "object",
+                    properties: {
+                      timestamp: {
+                        type: "string",
+                      },
+                      type: {
+                        const: "handoff_items_dismissed",
+                      },
+                      dismissals: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            type: {
+                              enum: ["discovered_issue", "critical_context", "incomplete_work"],
+                            },
+                            sourceFeatureId: {
+                              type: "string",
+                            },
+                            summary: {
+                              type: "string",
+                            },
+                            justification: {
+                              type: "string",
+                            },
+                          },
+                          additionalProperties: false,
+                          required: ["type", "sourceFeatureId", "summary", "justification"],
+                        },
+                      },
+                    },
+                    additionalProperties: false,
+                    required: ["timestamp", "type"],
+                  },
+                  {
+                    type: "object",
+                    properties: {
+                      timestamp: {
+                        type: "string",
+                      },
+                      type: {
+                        const: "milestone_validation_triggered",
+                      },
+                      milestone: {
+                        type: "string",
+                      },
+                      featureId: {
+                        type: "string",
+                      },
+                    },
+                    additionalProperties: false,
+                    required: ["timestamp", "type", "milestone", "featureId"],
+                  },
+                ],
+              },
+            },
+            workerSessionIds: {
+              type: "array",
+              items: {
+                type: "string",
+              },
+            },
+            workerStates: {
+              type: "object",
+              additionalProperties: {
+                type: "object",
+                properties: {
+                  startedAt: {
+                    type: "string",
+                  },
+                  completedAt: {
+                    type: "string",
+                  },
+                  exitCode: {
+                    type: "number",
+                  },
+                },
+                additionalProperties: false,
+                required: ["startedAt"],
               },
             },
             tokenUsage: {
@@ -22079,951 +22643,293 @@ export const SURFACE: ReadonlyArray<WireEntry> = [
                 "thinkingTokens",
               ],
             },
-            inclusiveTokenUsage: {
+            tokenUsageBySessionId: {
               type: "object",
-              properties: {
-                inputTokens: {
-                  type: "number",
+              additionalProperties: {
+                type: "object",
+                properties: {
+                  inputTokens: {
+                    type: "number",
+                  },
+                  outputTokens: {
+                    type: "number",
+                  },
+                  cacheCreationTokens: {
+                    type: "number",
+                  },
+                  cacheReadTokens: {
+                    type: "number",
+                  },
+                  thinkingTokens: {
+                    type: "number",
+                  },
+                  factoryCredits: {
+                    type: "number",
+                  },
                 },
-                outputTokens: {
-                  type: "number",
-                },
-                cacheCreationTokens: {
-                  type: "number",
-                },
-                cacheReadTokens: {
-                  type: "number",
-                },
-                thinkingTokens: {
-                  type: "number",
-                },
-                factoryCredits: {
-                  type: "number",
-                },
+                additionalProperties: false,
+                required: [
+                  "inputTokens",
+                  "outputTokens",
+                  "cacheCreationTokens",
+                  "cacheReadTokens",
+                  "thinkingTokens",
+                ],
               },
-              additionalProperties: false,
-              required: [
-                "inputTokens",
-                "outputTokens",
-                "cacheCreationTokens",
-                "cacheReadTokens",
-                "thinkingTokens",
-              ],
             },
-            lastCallTokenUsage: {
-              type: "object",
-              properties: {
-                inputTokens: {
-                  type: "number",
-                },
-                cacheReadTokens: {
-                  type: "number",
-                },
-                outputTokens: {
-                  type: "number",
-                },
+          },
+          additionalProperties: false,
+          required: ["state", "features", "progressLog", "workerSessionIds"],
+        },
+        decompSessionType: {
+          enum: ["orchestrator", "worker"],
+        },
+        subagentInvocations: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              childSessionId: {
+                type: "string",
               },
-              additionalProperties: false,
-              required: ["inputTokens", "cacheReadTokens"],
+              toolUseCount: {
+                type: "number",
+              },
+              durationMs: {
+                type: "number",
+              },
+              status: {
+                enum: ["pending", "running", "completed", "failed", "cancelled"],
+              },
+              subagentType: {
+                type: "string",
+              },
+              description: {
+                type: "string",
+              },
             },
-            mission: {
+            additionalProperties: false,
+            required: ["childSessionId", "status", "subagentType", "description"],
+          },
+        },
+        settings: {
+          type: "object",
+          properties: {
+            modelId: {
+              type: "string",
+            },
+            reasoningEffort: {
+              enum: ["none", "dynamic", "off", "minimal", "low", "medium", "high", "xhigh", "max"],
+            },
+            routedModelId: {
+              type: "string",
+            },
+            routedReasoningEffort: {
+              enum: ["none", "dynamic", "off", "minimal", "low", "medium", "high", "xhigh", "max"],
+            },
+            interactionMode: {
+              enum: ["auto", "spec", "agi", "mission"],
+            },
+            autonomyLevel: {
+              enum: ["off", "low", "medium", "high"],
+            },
+            availableAutonomyLevels: {
+              type: "array",
+              items: {
+                enum: ["off", "low", "medium", "high"],
+              },
+            },
+            specModeModelId: {
+              type: "string",
+            },
+            specModeReasoningEffort: {
+              enum: ["none", "dynamic", "off", "minimal", "low", "medium", "high", "xhigh", "max"],
+            },
+            missionSettings: {
               type: "object",
               properties: {
-                state: {
+                workerModel: {
+                  type: "string",
+                },
+                workerReasoningEffort: {
                   enum: [
-                    "planning",
-                    "awaiting_input",
-                    "initializing",
-                    "running",
-                    "paused",
-                    "orchestrator_turn",
-                    "completed",
+                    "none",
+                    "dynamic",
+                    "off",
+                    "minimal",
+                    "low",
+                    "medium",
+                    "high",
+                    "xhigh",
+                    "max",
                   ],
                 },
-                updatedAt: {
+                validationWorkerModel: {
                   type: "string",
                 },
-                title: {
-                  type: "string",
-                },
-                workingDirectory: {
-                  type: "string",
-                },
-                features: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      id: {
-                        type: "string",
-                      },
-                      description: {
-                        type: "string",
-                      },
-                      status: {
-                        enum: ["pending", "in_progress", "completed", "cancelled"],
-                      },
-                      skillName: {
-                        type: "string",
-                      },
-                      preconditions: {
-                        type: "array",
-                        items: {
-                          type: "string",
-                        },
-                      },
-                      expectedBehavior: {
-                        type: "array",
-                        items: {
-                          type: "string",
-                        },
-                      },
-                      fulfills: {
-                        type: "array",
-                        items: {
-                          type: "string",
-                        },
-                      },
-                      milestone: {
-                        type: "string",
-                      },
-                      workerSessionIds: {
-                        type: "array",
-                        items: {
-                          type: "string",
-                        },
-                      },
-                      currentWorkerSessionId: {
-                        type: "string",
-                      },
-                      completedWorkerSessionId: {
-                        type: "string",
-                      },
-                    },
-                    additionalProperties: false,
-                    required: [
-                      "id",
-                      "description",
-                      "status",
-                      "skillName",
-                      "preconditions",
-                      "expectedBehavior",
-                    ],
-                  },
-                },
-                progressLog: {
-                  type: "array",
-                  items: {
-                    anyOf: [
-                      {
-                        type: "object",
-                        properties: {
-                          timestamp: {
-                            type: "string",
-                          },
-                          type: {
-                            const: "mission_accepted",
-                          },
-                          title: {
-                            type: "string",
-                          },
-                        },
-                        additionalProperties: false,
-                        required: ["timestamp", "type", "title"],
-                      },
-                      {
-                        type: "object",
-                        properties: {
-                          timestamp: {
-                            type: "string",
-                          },
-                          type: {
-                            const: "mission_paused",
-                          },
-                          pauseReason: {
-                            enum: [
-                              "unrecoverable_usage_402",
-                              "feature_retry_limit_exceeded",
-                              "scope_growth_limit_exceeded",
-                            ],
-                          },
-                        },
-                        additionalProperties: false,
-                        required: ["timestamp", "type"],
-                      },
-                      {
-                        type: "object",
-                        properties: {
-                          timestamp: {
-                            type: "string",
-                          },
-                          type: {
-                            const: "mission_resumed",
-                          },
-                          resumeWorkerSessionId: {
-                            type: "string",
-                          },
-                        },
-                        additionalProperties: false,
-                        required: ["timestamp", "type"],
-                      },
-                      {
-                        type: "object",
-                        properties: {
-                          timestamp: {
-                            type: "string",
-                          },
-                          type: {
-                            const: "mission_run_started",
-                          },
-                          message: {
-                            type: "string",
-                          },
-                        },
-                        additionalProperties: false,
-                        required: ["timestamp", "type"],
-                      },
-                      {
-                        type: "object",
-                        properties: {
-                          timestamp: {
-                            type: "string",
-                          },
-                          type: {
-                            const: "worker_started",
-                          },
-                          workerSessionId: {
-                            type: "string",
-                          },
-                          spawnId: {
-                            type: "string",
-                          },
-                          featureId: {
-                            type: "string",
-                          },
-                          modelId: {
-                            type: "string",
-                          },
-                          substitutedFromModelId: {
-                            type: "string",
-                          },
-                        },
-                        additionalProperties: false,
-                        required: ["timestamp", "type", "workerSessionId", "spawnId"],
-                      },
-                      {
-                        type: "object",
-                        properties: {
-                          timestamp: {
-                            type: "string",
-                          },
-                          type: {
-                            const: "worker_selected_feature",
-                          },
-                          workerSessionId: {
-                            type: "string",
-                          },
-                          featureId: {
-                            type: "string",
-                          },
-                        },
-                        additionalProperties: false,
-                        required: ["timestamp", "type", "workerSessionId", "featureId"],
-                      },
-                      {
-                        type: "object",
-                        properties: {
-                          timestamp: {
-                            type: "string",
-                          },
-                          type: {
-                            const: "worker_completed",
-                          },
-                          workerSessionId: {
-                            type: "string",
-                          },
-                          featureId: {
-                            type: "string",
-                          },
-                          successState: {
-                            enum: ["success", "partial", "failure"],
-                          },
-                          returnToOrchestrator: {
-                            type: "boolean",
-                          },
-                          commitId: {
-                            type: "string",
-                          },
-                          repoPath: {
-                            type: "string",
-                          },
-                          exitCode: {
-                            type: "number",
-                          },
-                          validatorsPassed: {
-                            type: "boolean",
-                          },
-                          handoff: {
-                            type: "object",
-                            properties: {
-                              salientSummary: {
-                                type: "string",
-                              },
-                              whatWasImplemented: {
-                                type: "string",
-                              },
-                              whatWasLeftUndone: {
-                                type: "string",
-                              },
-                              verification: {
-                                type: "object",
-                                properties: {
-                                  commandsRun: {
-                                    type: "array",
-                                    items: {
-                                      type: "object",
-                                      properties: {
-                                        command: {
-                                          type: "string",
-                                        },
-                                        exitCode: {
-                                          type: "number",
-                                        },
-                                        observation: {
-                                          type: "string",
-                                        },
-                                      },
-                                      additionalProperties: false,
-                                      required: ["command", "exitCode", "observation"],
-                                    },
-                                  },
-                                  interactiveChecks: {
-                                    type: "array",
-                                    items: {
-                                      type: "object",
-                                      properties: {
-                                        action: {
-                                          type: "string",
-                                        },
-                                        observed: {
-                                          type: "string",
-                                        },
-                                      },
-                                      additionalProperties: false,
-                                      required: ["action", "observed"],
-                                    },
-                                  },
-                                },
-                                additionalProperties: false,
-                                required: ["commandsRun"],
-                              },
-                              tests: {
-                                type: "object",
-                                properties: {
-                                  added: {
-                                    type: "array",
-                                    items: {
-                                      type: "object",
-                                      properties: {
-                                        file: {
-                                          type: "string",
-                                        },
-                                        cases: {
-                                          type: "array",
-                                          items: {
-                                            type: "object",
-                                            properties: {
-                                              name: {
-                                                type: "string",
-                                              },
-                                              verifies: {
-                                                type: "string",
-                                              },
-                                            },
-                                            additionalProperties: false,
-                                            required: ["name", "verifies"],
-                                          },
-                                        },
-                                      },
-                                      additionalProperties: false,
-                                      required: ["file", "cases"],
-                                    },
-                                  },
-                                  updated: {
-                                    type: "array",
-                                    items: {
-                                      type: "string",
-                                    },
-                                  },
-                                  coverage: {
-                                    type: "string",
-                                  },
-                                },
-                                additionalProperties: false,
-                                required: ["added", "coverage"],
-                              },
-                              discoveredIssues: {
-                                type: "array",
-                                items: {
-                                  type: "object",
-                                  properties: {
-                                    severity: {
-                                      enum: ["blocking", "non_blocking", "suggestion"],
-                                    },
-                                    description: {
-                                      type: "string",
-                                    },
-                                    suggestedFix: {
-                                      type: "string",
-                                    },
-                                  },
-                                  additionalProperties: false,
-                                  required: ["severity", "description"],
-                                },
-                              },
-                              skillFeedback: {
-                                type: "object",
-                                properties: {
-                                  followedProcedure: {
-                                    type: "boolean",
-                                  },
-                                  deviations: {
-                                    type: "array",
-                                    items: {
-                                      type: "object",
-                                      properties: {
-                                        step: {
-                                          type: "string",
-                                        },
-                                        whatIDidInstead: {
-                                          type: "string",
-                                        },
-                                        why: {
-                                          type: "string",
-                                        },
-                                      },
-                                      additionalProperties: false,
-                                      required: ["step", "whatIDidInstead", "why"],
-                                    },
-                                  },
-                                  suggestedChanges: {
-                                    type: "array",
-                                    items: {
-                                      type: "string",
-                                    },
-                                  },
-                                },
-                                additionalProperties: false,
-                                required: ["followedProcedure", "deviations"],
-                              },
-                            },
-                            additionalProperties: false,
-                            required: [
-                              "whatWasImplemented",
-                              "whatWasLeftUndone",
-                              "verification",
-                              "tests",
-                              "discoveredIssues",
-                            ],
-                          },
-                        },
-                        additionalProperties: false,
-                        required: [
-                          "timestamp",
-                          "type",
-                          "workerSessionId",
-                          "featureId",
-                          "successState",
-                          "returnToOrchestrator",
-                          "exitCode",
-                        ],
-                      },
-                      {
-                        type: "object",
-                        properties: {
-                          timestamp: {
-                            type: "string",
-                          },
-                          type: {
-                            const: "worker_failed",
-                          },
-                          workerSessionId: {
-                            type: "string",
-                          },
-                          spawnId: {
-                            type: "string",
-                          },
-                          exitCode: {
-                            type: "number",
-                          },
-                          reason: {
-                            type: "string",
-                          },
-                          failureReason: {
-                            enum: ["unrecoverable_usage_402", "worker_exited_without_handoff"],
-                          },
-                        },
-                        additionalProperties: false,
-                        required: ["timestamp", "type", "spawnId", "reason"],
-                      },
-                      {
-                        type: "object",
-                        properties: {
-                          timestamp: {
-                            type: "string",
-                          },
-                          type: {
-                            const: "worker_paused",
-                          },
-                          workerSessionId: {
-                            type: "string",
-                          },
-                          featureId: {
-                            type: "string",
-                          },
-                        },
-                        additionalProperties: false,
-                        required: ["timestamp", "type", "workerSessionId"],
-                      },
-                      {
-                        type: "object",
-                        properties: {
-                          timestamp: {
-                            type: "string",
-                          },
-                          type: {
-                            const: "handoff_items_dismissed",
-                          },
-                          dismissals: {
-                            type: "array",
-                            items: {
-                              type: "object",
-                              properties: {
-                                type: {
-                                  enum: ["discovered_issue", "critical_context", "incomplete_work"],
-                                },
-                                sourceFeatureId: {
-                                  type: "string",
-                                },
-                                summary: {
-                                  type: "string",
-                                },
-                                justification: {
-                                  type: "string",
-                                },
-                              },
-                              additionalProperties: false,
-                              required: ["type", "sourceFeatureId", "summary", "justification"],
-                            },
-                          },
-                        },
-                        additionalProperties: false,
-                        required: ["timestamp", "type"],
-                      },
-                      {
-                        type: "object",
-                        properties: {
-                          timestamp: {
-                            type: "string",
-                          },
-                          type: {
-                            const: "milestone_validation_triggered",
-                          },
-                          milestone: {
-                            type: "string",
-                          },
-                          featureId: {
-                            type: "string",
-                          },
-                        },
-                        additionalProperties: false,
-                        required: ["timestamp", "type", "milestone", "featureId"],
-                      },
-                    ],
-                  },
-                },
-                workerSessionIds: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                  },
-                },
-                workerStates: {
-                  type: "object",
-                  additionalProperties: {
-                    type: "object",
-                    properties: {
-                      startedAt: {
-                        type: "string",
-                      },
-                      completedAt: {
-                        type: "string",
-                      },
-                      exitCode: {
-                        type: "number",
-                      },
-                    },
-                    additionalProperties: false,
-                    required: ["startedAt"],
-                  },
-                },
-                tokenUsage: {
-                  type: "object",
-                  properties: {
-                    inputTokens: {
-                      type: "number",
-                    },
-                    outputTokens: {
-                      type: "number",
-                    },
-                    cacheCreationTokens: {
-                      type: "number",
-                    },
-                    cacheReadTokens: {
-                      type: "number",
-                    },
-                    thinkingTokens: {
-                      type: "number",
-                    },
-                    factoryCredits: {
-                      type: "number",
-                    },
-                  },
-                  additionalProperties: false,
-                  required: [
-                    "inputTokens",
-                    "outputTokens",
-                    "cacheCreationTokens",
-                    "cacheReadTokens",
-                    "thinkingTokens",
+                validationWorkerReasoningEffort: {
+                  enum: [
+                    "none",
+                    "dynamic",
+                    "off",
+                    "minimal",
+                    "low",
+                    "medium",
+                    "high",
+                    "xhigh",
+                    "max",
                   ],
                 },
-                tokenUsageBySessionId: {
-                  type: "object",
-                  additionalProperties: {
-                    type: "object",
-                    properties: {
-                      inputTokens: {
-                        type: "number",
-                      },
-                      outputTokens: {
-                        type: "number",
-                      },
-                      cacheCreationTokens: {
-                        type: "number",
-                      },
-                      cacheReadTokens: {
-                        type: "number",
-                      },
-                      thinkingTokens: {
-                        type: "number",
-                      },
-                      factoryCredits: {
-                        type: "number",
-                      },
-                    },
-                    additionalProperties: false,
-                    required: [
-                      "inputTokens",
-                      "outputTokens",
-                      "cacheCreationTokens",
-                      "cacheReadTokens",
-                      "thinkingTokens",
-                    ],
-                  },
+                skipScrutiny: {
+                  type: "boolean",
+                },
+                skipUserTesting: {
+                  type: "boolean",
                 },
               },
               additionalProperties: false,
-              required: ["state", "features", "progressLog", "workerSessionIds"],
             },
-            decompSessionType: {
-              enum: ["orchestrator", "worker"],
-            },
-            subagentInvocations: {
+            tags: {
               type: "array",
               items: {
                 type: "object",
                 properties: {
-                  childSessionId: {
+                  name: {
                     type: "string",
                   },
-                  toolUseCount: {
-                    type: "number",
+                  metadata: {
+                    type: "object",
+                    additionalProperties: {
+                      type: "string",
+                    },
                   },
-                  durationMs: {
-                    type: "number",
+                },
+                additionalProperties: false,
+                required: ["name"],
+              },
+            },
+            sandbox: {
+              type: "object",
+              properties: {
+                enabled: {
+                  type: "boolean",
+                },
+                mode: {
+                  enum: ["per-command", "whole-process"],
+                },
+              },
+              additionalProperties: false,
+              required: ["enabled"],
+            },
+            compactionThresholdCheckEnabled: {
+              type: "boolean",
+            },
+            toolExecutionMode: {
+              enum: ["direct_only", "script_only"],
+            },
+            allowSubagentsInScripts: {
+              type: "boolean",
+            },
+            systemPrompt: {
+              anyOf: [
+                {
+                  type: "string",
+                },
+                {
+                  type: "object",
+                  properties: {
+                    type: {
+                      const: "preset",
+                    },
+                    preset: {
+                      const: "droid",
+                    },
+                    append: {
+                      type: "string",
+                    },
                   },
-                  status: {
-                    enum: ["pending", "running", "completed", "failed", "cancelled"],
-                  },
-                  subagentType: {
+                  additionalProperties: false,
+                  required: ["type", "preset", "append"],
+                },
+              ],
+            },
+            migrationActive: {
+              type: "boolean",
+            },
+            migrationDirectory: {
+              type: "string",
+            },
+            artifacts: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  id: {
                     type: "string",
                   },
-                  description: {
+                  url: {
+                    type: "string",
+                  },
+                  title: {
+                    type: "string",
+                  },
+                  externalId: {
+                    type: "string",
+                  },
+                  provider: {
+                    enum: ["github", "gitlab", "linear", "jira", "notion", "web"],
+                  },
+                  kind: {
+                    enum: ["pull_request", "issue", "document", "link"],
+                  },
+                  action: {
+                    enum: ["create", "update", "delete", "view", "close", "merge"],
+                  },
+                  source: {
+                    enum: ["tool", "classifier", "user_message"],
+                  },
+                  createdAt: {
+                    type: "string",
+                  },
+                  toolCallId: {
                     type: "string",
                   },
                 },
                 additionalProperties: false,
-                required: ["childSessionId", "status", "subagentType", "description"],
+                required: ["id", "url", "provider", "kind", "source", "createdAt"],
+              },
+            },
+            additionalToolIds: {
+              type: "array",
+              items: {
+                type: "string",
+              },
+            },
+            enabledToolIds: {
+              type: "array",
+              items: {
+                type: "string",
+              },
+            },
+            disabledToolIds: {
+              type: "array",
+              items: {
+                type: "string",
+              },
+            },
+            restrictToolIds: {
+              type: "array",
+              items: {
+                type: "string",
               },
             },
           },
           additionalProperties: false,
-          required: ["session"],
+          required: ["modelId", "reasoningEffort"],
         },
-        {
-          type: "object",
-          properties: {
-            settings: {
-              type: "object",
-              properties: {
-                modelId: {
-                  type: "string",
-                },
-                reasoningEffort: {
-                  enum: [
-                    "none",
-                    "dynamic",
-                    "off",
-                    "minimal",
-                    "low",
-                    "medium",
-                    "high",
-                    "xhigh",
-                    "max",
-                  ],
-                },
-                routedModelId: {
-                  type: "string",
-                },
-                routedReasoningEffort: {
-                  enum: [
-                    "none",
-                    "dynamic",
-                    "off",
-                    "minimal",
-                    "low",
-                    "medium",
-                    "high",
-                    "xhigh",
-                    "max",
-                  ],
-                },
-                interactionMode: {
-                  enum: ["auto", "spec", "agi", "mission"],
-                },
-                autonomyLevel: {
-                  enum: ["off", "low", "medium", "high"],
-                },
-                availableAutonomyLevels: {
-                  type: "array",
-                  items: {
-                    enum: ["off", "low", "medium", "high"],
-                  },
-                },
-                specModeModelId: {
-                  type: "string",
-                },
-                specModeReasoningEffort: {
-                  enum: [
-                    "none",
-                    "dynamic",
-                    "off",
-                    "minimal",
-                    "low",
-                    "medium",
-                    "high",
-                    "xhigh",
-                    "max",
-                  ],
-                },
-                missionSettings: {
-                  type: "object",
-                  properties: {
-                    workerModel: {
-                      type: "string",
-                    },
-                    workerReasoningEffort: {
-                      enum: [
-                        "none",
-                        "dynamic",
-                        "off",
-                        "minimal",
-                        "low",
-                        "medium",
-                        "high",
-                        "xhigh",
-                        "max",
-                      ],
-                    },
-                    validationWorkerModel: {
-                      type: "string",
-                    },
-                    validationWorkerReasoningEffort: {
-                      enum: [
-                        "none",
-                        "dynamic",
-                        "off",
-                        "minimal",
-                        "low",
-                        "medium",
-                        "high",
-                        "xhigh",
-                        "max",
-                      ],
-                    },
-                    skipScrutiny: {
-                      type: "boolean",
-                    },
-                    skipUserTesting: {
-                      type: "boolean",
-                    },
-                  },
-                  additionalProperties: false,
-                },
-                tags: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      name: {
-                        type: "string",
-                      },
-                      metadata: {
-                        type: "object",
-                        additionalProperties: {
-                          type: "string",
-                        },
-                      },
-                    },
-                    additionalProperties: false,
-                    required: ["name"],
-                  },
-                },
-                sandbox: {
-                  type: "object",
-                  properties: {
-                    enabled: {
-                      type: "boolean",
-                    },
-                    mode: {
-                      enum: ["per-command", "whole-process"],
-                    },
-                  },
-                  additionalProperties: false,
-                  required: ["enabled"],
-                },
-                compactionThresholdCheckEnabled: {
-                  type: "boolean",
-                },
-                toolExecutionMode: {
-                  enum: ["direct_only", "script_only"],
-                },
-                allowSubagentsInScripts: {
-                  type: "boolean",
-                },
-                systemPrompt: {
-                  anyOf: [
-                    {
-                      type: "string",
-                    },
-                    {
-                      type: "object",
-                      properties: {
-                        type: {
-                          const: "preset",
-                        },
-                        preset: {
-                          const: "droid",
-                        },
-                        append: {
-                          type: "string",
-                        },
-                      },
-                      additionalProperties: false,
-                      required: ["type", "preset", "append"],
-                    },
-                  ],
-                },
-                migrationActive: {
-                  type: "boolean",
-                },
-                migrationDirectory: {
-                  type: "string",
-                },
-                artifacts: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      id: {
-                        type: "string",
-                      },
-                      url: {
-                        type: "string",
-                      },
-                      title: {
-                        type: "string",
-                      },
-                      externalId: {
-                        type: "string",
-                      },
-                      provider: {
-                        enum: ["github", "gitlab", "linear", "jira", "notion", "web"],
-                      },
-                      kind: {
-                        enum: ["pull_request", "issue", "document", "link"],
-                      },
-                      action: {
-                        enum: ["create", "update", "delete", "view", "close", "merge"],
-                      },
-                      source: {
-                        enum: ["tool", "classifier", "user_message"],
-                      },
-                      createdAt: {
-                        type: "string",
-                      },
-                      toolCallId: {
-                        type: "string",
-                      },
-                    },
-                    additionalProperties: false,
-                    required: ["id", "url", "provider", "kind", "source", "createdAt"],
-                  },
-                },
-                additionalToolIds: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                  },
-                },
-                enabledToolIds: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                  },
-                },
-                disabledToolIds: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                  },
-                },
-                restrictToolIds: {
-                  type: "array",
-                  items: {
-                    type: "string",
-                  },
-                },
-              },
-              additionalProperties: false,
-              required: ["modelId", "reasoningEffort"],
-            },
-          },
-          additionalProperties: false,
-          required: ["settings"],
-        },
-      ],
+      },
+      additionalProperties: false,
+      required: ["session", "settings"],
     },
   },
   {

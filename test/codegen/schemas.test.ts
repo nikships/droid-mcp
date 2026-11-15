@@ -1,3 +1,4 @@
+import { LoadSessionResultSchema } from "@factory/droid-sdk"
 import type * as JsonSchema from "effect/JsonSchema"
 import * as Schema from "effect/Schema"
 import * as SchemaRepresentation from "effect/SchemaRepresentation"
@@ -47,6 +48,50 @@ describe("generated schemas", () => {
     for (const entry of SURFACE) {
       expect(() => schemaOf(entry.result), entry.method + " result").not.toThrow()
     }
+  })
+
+  it("decodes the SDK's intersected load-session result without losing either side", () => {
+    const entry = SURFACE.find((value) => value.method === "droid.load_session")
+
+    if (entry === undefined) throw new Error("no load_session entry")
+
+    const payload = {
+      session: { messages: [] },
+      settings: { modelId: "fake-model", reasoningEffort: "low" },
+    }
+
+    expect(LoadSessionResultSchema.safeParse(payload).success).toBe(true)
+    expect(decode(schemaOf(entry.result), payload)).toEqual(payload)
+  })
+
+  it.each([
+    ["missing session", { settings: { modelId: "fake-model", reasoningEffort: "low" } }],
+    ["missing settings", { session: { messages: [] } }],
+    [
+      "invalid messages",
+      {
+        session: { messages: "not an array" },
+        settings: { modelId: "fake-model", reasoningEffort: "low" },
+      },
+    ],
+    [
+      "invalid model",
+      { session: { messages: [] }, settings: { modelId: 1, reasoningEffort: "low" } },
+    ],
+    [
+      "invalid reasoning effort",
+      {
+        session: { messages: [] },
+        settings: { modelId: "fake-model", reasoningEffort: "highest" },
+      },
+    ],
+  ])("rejects an SDK-invalid load-session result: %s", (_name, payload) => {
+    const entry = SURFACE.find((value) => value.method === "droid.load_session")
+
+    if (entry === undefined) throw new Error("no load_session entry")
+
+    expect(LoadSessionResultSchema.safeParse(payload).success).toBe(false)
+    expect(() => decode(schemaOf(entry.result), payload)).toThrow()
   })
 
   it("validates a real payload against its own schema", () => {

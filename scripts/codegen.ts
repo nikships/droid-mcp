@@ -350,6 +350,40 @@ const objectOfMembers = (
 const tupleOptions = (node: ts.TypeNode | undefined): ReadonlyArray<ts.TypeNode> =>
   node !== undefined && ts.isTupleTypeNode(node) ? node.elements : []
 
+/** Closed object intersections must allow the keys declared by either side. */
+const intersectionOf = (parts: ReadonlyArray<JsonSchema>): JsonSchema => {
+  const properties = new Map<string, JsonSchema>()
+  const required = new Set<string>()
+
+  for (const part of parts) {
+    if (
+      !isRecord(part) ||
+      part.type !== "object" ||
+      !isRecord(part.properties) ||
+      part.additionalProperties !== false
+    ) {
+      return { allOf: parts }
+    }
+
+    for (const [name, field] of Object.entries(part.properties)) {
+      const previous = properties.get(name)
+      properties.set(name, previous === undefined ? field : { allOf: [previous, field] })
+    }
+
+    if (Schema.is(Schema.Array(Schema.String))(part.required)) {
+      for (const name of part.required) required.add(name)
+    }
+  }
+
+  const object = {
+    type: "object",
+    properties: Object.fromEntries(properties),
+    additionalProperties: false,
+  }
+
+  return required.size === 0 ? object : { ...object, required: [...required] }
+}
+
 /** Converts any type node. Zod constructors get a structural schema. */
 const convertNode = (node: ts.TypeNode, context: ConvertContext): JsonSchema => {
   if (context.depth > MAX_DEPTH) return anySchema
@@ -357,9 +391,7 @@ const convertNode = (node: ts.TypeNode, context: ConvertContext): JsonSchema => 
   if (ts.isTypeLiteralNode(node)) return objectOfMembers(node.members, context)
 
   if (ts.isIntersectionTypeNode(node)) {
-    return {
-      allOf: node.types.map((part) => convertNode(part, context)),
-    }
+    return intersectionOf(node.types.map((part) => convertNode(part, context)))
   }
 
   if (ts.isUnionTypeNode(node)) {
