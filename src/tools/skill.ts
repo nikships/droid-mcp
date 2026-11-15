@@ -20,10 +20,8 @@ import { ToolFailure } from "./failure.ts"
  * call `skill_read`.
  */
 
-const SKILL_URI_PREFIX = SKILL_URI.slice(0, SKILL_URI.lastIndexOf("/") + 1)
-
 const SKILL_NOT_READ_MESSAGE =
-  "Read the droid skill before calling session_* tools: call skill_read, read resource " +
+  "Read the droid skill before calling session and work-starting tools: call skill_read, read resource " +
   SKILL_URI +
   ", or get prompt droid."
 
@@ -111,7 +109,7 @@ export const skillGateLayer = (requireSkill: boolean): Layer.Layer<SkillGate> =>
 
 export const SkillRead = Tool.make("skill_read", {
   description:
-    "Read the droid skill markdown. Required before any session_* call unless the client " +
+    "Read the droid skill markdown. Required before session and work-starting tools unless the client " +
     "already read " +
     SKILL_URI +
     " or the droid prompt.",
@@ -133,7 +131,7 @@ export const skillReadHandler = () =>
   )
 
 const isSkillTarget = (method: McpServer.MiddlewareMethod, target: string): boolean =>
-  (method === "resources/read" && (target === SKILL_URI || target.startsWith(SKILL_URI_PREFIX))) ||
+  (method === "resources/read" && target === SKILL_URI) ||
   (method === "prompts/get" && target === "droid") ||
   (method === "skills/get" && target === SKILL_URI)
 
@@ -166,7 +164,7 @@ export const droidPrompt = (): Layer.Layer<
 export const INSTRUCTIONS =
   "Drive Factory Droid. Call skill_read (or read " +
   SKILL_URI +
-  " / prompt droid) before any session_* call; session_* fails with skill_not_read until you do. " +
+  " / prompt droid) before session and work-starting tools; these fail with skill_not_read until you do. " +
   "Reuse server_info profile/cap and known schemas. " +
   "session_create -> session_stream -> session_events with each returned cursor; " +
   "use long waitMs and consume only the outcome when enough, but handle pending prompts " +
