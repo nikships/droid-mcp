@@ -48,7 +48,9 @@ Context writes, read [delegation](references/delegation.md) before acting.
 
 1. `session_create` with absolute existing `cwd`, explicit `autonomyLevel`
    (`off|low|medium|high`, within `maxAutonomy`), and optional `modelId`,
-   `reasoningEffort`, `restrictToolIds`, or `disabledToolIds`. Retain `sessionId`.
+   `reasoningEffort`, `restrictToolIds`, `disabledToolIds`, `worktree`, or
+   `worktreeName` (own git worktree and branch; see
+   [session loop](references/session-loop.md#isolate-with-a-worktree)). Retain `sessionId`.
 2. `session_stream` sends `prompt`; retain its `cursor`. While `status` is
    `running`, call `session_events` with that cursor unchanged, then replace
    it with the new returned cursor. It is the next sequence number, not the

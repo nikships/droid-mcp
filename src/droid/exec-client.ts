@@ -55,6 +55,8 @@ export interface ExecClient {
     message: string,
   ) => Effect.Effect<void, ExecError>
   readonly exited: Effect.Effect<ExecExit>
+  /** The first stderr the CLI wrote, capped at the stderr limit; later output cannot evict it. */
+  readonly startupStderr: Effect.Effect<string>
   readonly close: Effect.Effect<void>
 }
 
@@ -65,6 +67,8 @@ export interface ExecClientOptions {
   readonly env?: Readonly<Record<string, string | undefined>>
   /** Overrides the CLI arguments; tests point this at a script instead of `droid`. */
   readonly args?: ReadonlyArray<string>
+  /** Appended after the base arguments, for CLI flags that have no JSON-RPC equivalent. */
+  readonly extraArgs?: ReadonlyArray<string>
   readonly requestTimeoutMs?: number
   readonly stderrLimitBytes?: number
   /** Cap for one stdout line. A peer that never sends a newline cannot grow without bound. */
@@ -123,7 +127,9 @@ export const start = (options: ExecClientOptions): Effect.Effect<ExecClient, Exe
     const logger = options.logger
     const environment = execEnvironment(options.env ?? {}, options.version)
 
-    const child = spawn(options.droidPath, [...(options.args ?? EXEC_ARGS)], {
+    const argv = [...(options.args ?? EXEC_ARGS), ...(options.extraArgs ?? [])]
+
+    const child = spawn(options.droidPath, argv, {
       cwd: options.cwd,
       env: environment,
       stdio: ["pipe", "pipe", "pipe"],
@@ -182,14 +188,30 @@ export const start = (options: ExecClientOptions): Effect.Effect<ExecClient, Exe
     let nextId = 1
     const stderrChunks: Array<Buffer> = []
     let stderrBytes = 0
+    const startupChunks: Array<Buffer> = []
+    let startupBytes = 0
     let exitInfo: ExecExit | undefined
     let outputFailed = false
     let protocolVersion = SDK_PROTOCOL_VERSION
 
     const stderrTail = (): string => Buffer.concat(stderrChunks).toString("utf8")
 
+    const startupStderr = (): string => Buffer.concat(startupChunks).toString("utf8")
+
+    const keepStartup = (chunk: Buffer): void => {
+      const room = stderrLimit - startupBytes
+
+      if (room <= 0) return
+
+      const kept = chunk.subarray(0, room)
+
+      startupChunks.push(kept)
+      startupBytes += kept.length
+    }
+
     const pushStderr = (chunk: Buffer): void => {
       if (chunk.length === 0 || stderrLimit <= 0) return
+      keepStartup(chunk)
       stderrChunks.push(chunk)
       stderrBytes += chunk.length
 
@@ -558,6 +580,7 @@ export const start = (options: ExecClientOptions): Effect.Effect<ExecClient, Exe
       respond,
       respondError,
       exited: settled(),
+      startupStderr: Effect.sync(startupStderr),
       close,
     } satisfies ExecClient
   }).pipe(

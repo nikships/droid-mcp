@@ -17,6 +17,7 @@ import * as Stream from "effect/Stream"
 import type { AutonomyLevel } from "../config.ts"
 import type { Logger } from "../log.ts"
 import { ExecTimeout } from "./errors.ts"
+import type { ExecError } from "./errors.ts"
 import { start } from "./exec-client.ts"
 import type { ExecClient, ExecRequest } from "./exec-client.ts"
 import { EXEC_METHOD } from "./exec-protocol.ts"
@@ -114,6 +115,29 @@ export const SessionSettingsSchema = Schema.Struct({
 
 export type SessionSettings = typeof SessionSettingsSchema.Type
 
+export const WorktreeSchema = Schema.Struct({
+  path: Schema.String.annotate({ description: "Absolute path of the worktree checkout." }),
+  branch: Schema.String.annotate({ description: "Branch checked out in the worktree." }),
+})
+
+export type Worktree = typeof WorktreeSchema.Type
+
+/**
+ * `droid exec` writes this to stderr when it creates the worktree, and nowhere else:
+ * the initialize result does not carry it. The wording is the CLI's, not a protocol.
+ */
+const WORKTREE_ANNOUNCEMENT = /^Created worktree at (.+) \(branch: (.+)\)\r?\n/m
+
+export const parseWorktree = (stderr: string): Worktree | undefined => {
+  const match = WORKTREE_ANNOUNCEMENT.exec(stderr)
+
+  if (match?.[1] === undefined || match[2] === undefined) return undefined
+
+  return { path: match[1], branch: match[2] }
+}
+
+const WORKTREE_POLL_MS = 25
+
 export class SessionProblem extends Schema.TaggedError<SessionProblem>()("SessionProblem", {
   code: Schema.String,
   message: Schema.String,
@@ -136,6 +160,10 @@ export interface CreateSessionOptions {
   readonly reasoningEffort?: string
   readonly restrictToolIds?: ReadonlyArray<string>
   readonly disabledToolIds?: ReadonlyArray<string>
+  /** Run in a git worktree of `cwd`'s repository instead of `cwd` itself. */
+  readonly worktree?: boolean
+  /** Branch the worktree uses or creates; implies `worktree`. Omitted, the CLI picks one. */
+  readonly worktreeName?: string
   /** Server ceiling applied to permission prompts raised in this session. */
   readonly maxAutonomy?: AutonomyLevel
 }
@@ -144,6 +172,7 @@ export interface CreateSessionResult {
   readonly sessionId: string
   readonly cwd: string
   readonly settings: SessionSettings
+  readonly worktree?: Worktree
 }
 
 export interface StreamOptions {
@@ -177,6 +206,7 @@ export interface SessionSummary {
   readonly settings: SessionSettings
   readonly status: TurnStatus
   readonly cursor: number
+  readonly worktree?: Worktree
 }
 
 export interface SessionHubApi {
@@ -338,6 +368,7 @@ interface SessionState {
   readonly truncatedDeltas: Set<string>
   readonly buffer: Array<RingItem>
   cwd: string
+  readonly worktree: Worktree | undefined
   settings: SessionSettings
   models: ReadonlyArray<JsonValue>
   lastStatus: TurnStatus
@@ -742,6 +773,87 @@ const closedProblem = (sessionId: string): SessionProblem =>
   problem("session_closed", "session " + sessionId + " is closed")
 
 const shuttingDown = (): SessionProblem => problem("exec_failed", "session hub is shutting down")
+
+const withDetail = (cause: ExecError): string =>
+  cause.detail === undefined ? cause.message : cause.message + ": " + cause.detail.trimEnd()
+
+/** Git itself rejects the rest of the invalid names, and the CLI reports why. */
+const isBranchNameCandidate = (name: string): boolean =>
+  name.trim().length > 0 && !name.startsWith("-") && !name.includes("\0")
+
+/**
+ * `droid exec --input-format stream-jsonrpc` ignores worktree fields on initialize,
+ * so the worktree is requested with the CLI flag at spawn time. The name is joined to
+ * the flag with `=`, so it can never be read as another flag.
+ */
+export const worktreeFlags = (
+  options: Pick<CreateSessionOptions, "worktree" | "worktreeName">,
+): Effect.Effect<ReadonlyArray<string>, SessionProblem> => {
+  const { worktree, worktreeName } = options
+
+  if (worktreeName === undefined) return Effect.succeed(worktree === true ? ["--worktree"] : [])
+
+  if (worktree === false) {
+    return Effect.fail(
+      problem("invalid_worktree", "worktreeName cannot be used with worktree false"),
+    )
+  }
+
+  if (!isBranchNameCandidate(worktreeName)) {
+    return Effect.fail(
+      problem(
+        "invalid_worktree",
+        "worktreeName must be a branch name: not blank, not starting with '-'",
+      ),
+    )
+  }
+
+  return Effect.succeed(["--worktree=" + worktreeName])
+}
+
+const watchForWorktree = (exec: ExecClient): Effect.Effect<Worktree> =>
+  Effect.gen(function* () {
+    const found = parseWorktree(yield* exec.startupStderr)
+
+    if (found !== undefined) return found
+
+    yield* Effect.sleep(Duration.millis(WORKTREE_POLL_MS))
+
+    return yield* watchForWorktree(exec)
+  })
+
+const exitedBeforeWorktree = (exec: ExecClient): Effect.Effect<never, SessionProblem> =>
+  Effect.flatMap(exec.exited, (info) =>
+    Effect.fail(
+      problem(
+        "exec_failed",
+        "droid exec exited: code " +
+          String(info.code) +
+          (info.stderr.length === 0 ? "" : ": " + info.stderr.trimEnd()),
+      ),
+    ),
+  )
+
+const worktreeTimeout = (timeoutMs: number): Effect.Effect<never, SessionProblem> =>
+  Effect.flatMap(Effect.sleep(Duration.millis(timeoutMs)), () =>
+    Effect.fail(
+      problem("exec_timeout", "droid exec did not create its worktree within " + timeoutMs + " ms"),
+    ),
+  )
+
+/**
+ * The CLI creates the worktree before it reads any request and announces it on stderr.
+ * The session must initialize inside that checkout: initializing with the original
+ * directory moves the process back out of it.
+ */
+const createdWorktree = (
+  exec: ExecClient,
+  timeoutMs: number,
+): Effect.Effect<Worktree, SessionProblem> =>
+  Effect.raceFirst(
+    watchForWorktree(exec),
+    Effect.raceFirst(exitedBeforeWorktree(exec), worktreeTimeout(timeoutMs)),
+  )
 
 export const checkCwd = (cwd: string): Effect.Effect<string, SessionProblem> => {
   if (!isAbsolute(cwd)) {
@@ -1547,6 +1659,7 @@ export const sessionHub = (options: SessionHubOptions): Effect.Effect<SessionHub
           if (closing) return yield* Effect.fail(shuttingDown())
 
           const cwd = yield* checkCwd(createOptions.cwd)
+          const extraArgs = yield* worktreeFlags(createOptions)
 
           if (closing) return yield* Effect.fail(shuttingDown())
 
@@ -1556,33 +1669,32 @@ export const sessionHub = (options: SessionHubOptions): Effect.Effect<SessionHub
             version: options.version,
             env: options.env,
             args: options.args,
+            extraArgs,
             requestTimeoutMs: options.requestTimeoutMs,
             logger,
-          }).pipe(
-            Effect.mapError((cause) =>
-              problem(
-                "exec_failed",
-                cause.message + (cause.detail === undefined ? "" : ": " + cause.detail),
-              ),
-            ),
-          )
+          }).pipe(Effect.mapError((cause) => problem("exec_failed", withDetail(cause))))
 
           record = { exec, released: false }
           owned.push(record)
 
           if (closing) return yield* Effect.fail(shuttingDown())
 
+          const startupTimeoutMs = options.requestTimeoutMs ?? 60_000
+
+          const worktree =
+            extraArgs.length === 0 ? undefined : yield* createdWorktree(exec, startupTimeoutMs)
+
           const initialized = yield* exec
             .request({
               method: EXEC_METHOD.initialize,
-              params: { machineId: "local", cwd },
-              timeoutMs: options.requestTimeoutMs ?? 60_000,
+              params: { machineId: "local", cwd: worktree?.path ?? cwd },
+              timeoutMs: startupTimeoutMs,
             })
             .pipe(
               Effect.mapError((cause) =>
                 problem(
                   Schema.is(ExecTimeout)(cause) ? "exec_timeout" : "exec_failed",
-                  cause.message,
+                  withDetail(cause),
                 ),
               ),
             )
@@ -1650,6 +1762,7 @@ export const sessionHub = (options: SessionHubOptions): Effect.Effect<SessionHub
             cwd,
             exec,
             owned: record,
+            worktree,
             scope: Scope.makeUnsafe(),
             mutex: yield* Semaphore.make(1),
             promptMutex: yield* Semaphore.make(1),
@@ -1688,7 +1801,9 @@ export const sessionHub = (options: SessionHubOptions): Effect.Effect<SessionHub
 
           if (closing) return yield* Effect.fail(shuttingDown())
 
-          return { sessionId: session.id, cwd, settings }
+          return worktree === undefined
+            ? { sessionId: session.id, cwd, settings }
+            : { sessionId: session.id, cwd, settings, worktree }
         })
 
         return yield* Effect.onExit(work, (exit) => {
@@ -2046,13 +2161,17 @@ export const sessionHub = (options: SessionHubOptions): Effect.Effect<SessionHub
         const listed: Array<SessionSummary> = []
 
         for (const session of sessions.values()) {
-          listed.push({
+          const summary = {
             sessionId: session.id,
             cwd: session.cwd,
             settings: session.settings,
             status: listedStatus(session),
             cursor: session.nextSeq,
-          })
+          }
+
+          listed.push(
+            session.worktree === undefined ? summary : { ...summary, worktree: session.worktree },
+          )
         }
 
         return listed

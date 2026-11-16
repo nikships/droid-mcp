@@ -165,6 +165,8 @@ describe("tool failures over MCP", () => {
         reasoningEffort: { type: "string" },
         restrictToolIds: { type: "array", items: { type: "string" } },
         disabledToolIds: { type: "array", items: { type: "string" } },
+        worktree: { type: "boolean", description: expect.any(String) },
+        worktreeName: { type: "string", description: expect.any(String) },
       },
       required: ["cwd", "autonomyLevel"],
       additionalProperties: true,

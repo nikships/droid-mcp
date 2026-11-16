@@ -33,6 +33,7 @@
  *   "spec"        asks to leave spec mode with an edited plan
  *   "interrupt"   stays running until `droid.interrupt_session`
  *   "echo:<text>" completes with <text> as structured output
+ *   "cwd"         completes with the cwd that initialize carried as structured output
  *
  * Environment:
  *   FAKE_DROID_INIT=hang       never answer initialize
@@ -41,6 +42,13 @@
  *   FAKE_DROID_CLOSE_MARKER    file written when that ignored close arrives
  *   FAKE_DROID_PIDFILE         write this process's pid
  *   FAKE_DROID_PIDDIR          one file per pid, so concurrent children stay visible
+ *   FAKE_DROID_WORKTREE=reject exit 1 at startup, as the CLI does outside a git repository
+ *   FAKE_DROID_WORKTREE=silent start without announcing the worktree it was asked for
+ *   FAKE_DROID_WORKTREE=noisy  follow the announcement with more stderr than the client keeps
+ *   FAKE_DROID_WORKTREE=split  write the announcement in two chunks, the first ending in ")"
+ *
+ * A `--worktree` or `--worktree=<name>` argument is answered the way the CLI does:
+ * one stderr line naming the checkout and its branch (`fake-branch` when unnamed).
  *
  * Every answered prompt is echoed back as the turn's `structuredOutput`, so a
  * test can assert exactly what reached the CLI.
@@ -59,6 +67,41 @@ if (piddir !== undefined && piddir.length > 0) {
   mkdirSync(piddir, { recursive: true })
   writeFileSync(join(piddir, String(process.pid)), "")
 }
+
+const worktreeFlag = process.argv
+  .slice(2)
+  .find((arg) => arg === "--worktree" || arg.startsWith("--worktree="))
+
+if (worktreeFlag !== undefined) {
+  const mode = process.env.FAKE_DROID_WORKTREE
+
+  if (mode === "reject") {
+    process.stderr.write("Error: Not inside a git repository\n")
+    process.exit(1)
+  }
+
+  if (mode !== "silent") {
+    const branch = worktreeFlag.includes("=")
+      ? worktreeFlag.slice(worktreeFlag.indexOf("=") + 1)
+      : "fake-branch"
+
+    const announcement =
+      "Created worktree at /fake/worktrees/abc123/repo (branch: " + branch + ")\n"
+
+    const cut = announcement.indexOf(")") + 1
+
+    if (mode === "split") {
+      process.stderr.write(announcement.slice(0, cut))
+      setTimeout(() => process.stderr.write(announcement.slice(cut)), 150)
+    } else {
+      process.stderr.write(announcement)
+    }
+
+    if (mode === "noisy") process.stderr.write("noise ".repeat(3000) + "\n")
+  }
+}
+
+let initializedCwd
 
 const PROTOCOL = "1.299.0"
 const SESSION_ID = "fake-session"
@@ -610,6 +653,12 @@ const handleMessage = (text, id) => {
     return
   }
 
+  if (text === "cwd") {
+    complete("completed", { structuredOutput: { cwd: initializedCwd } })
+
+    return
+  }
+
   complete("completed")
 }
 
@@ -867,6 +916,8 @@ const router = (message) => {
 
   if (message.method === "droid.initialize_session") {
     if (process.env.FAKE_DROID_INIT === "hang") return
+
+    initializedCwd = message.params?.cwd
 
     respond(message.id, {
       sessionId: SESSION_ID,

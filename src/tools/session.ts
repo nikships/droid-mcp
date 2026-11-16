@@ -10,6 +10,7 @@ import {
   SessionSettingsSchema,
   TurnResultSchema,
   TurnStatusSchema,
+  WorktreeSchema,
 } from "../droid/turns.ts"
 import { ToolFailure } from "./failure.ts"
 import { requireAutonomy, requireCwd, toolFailure } from "./guards.ts"
@@ -20,10 +21,35 @@ export const WaitMsSchema = Schema.Int.check(
   Schema.isBetween({ minimum: 0, maximum: MAX_WAIT_MS }),
 ).annotate({ description: "How long to wait, in milliseconds: 20000 by default, 300000 at most." })
 
+/**
+ * Worktree options shared by every tool that starts a session. A worktree gives the
+ * session its own checkout and branch, so parallel sessions in one repository cannot
+ * edit each other's files. The CLI removes a worktree that is still clean when the
+ * session ends and keeps one with changes; the branch always stays.
+ */
+export const WorktreeParams = {
+  worktree: Schema.optionalKey(
+    Schema.Boolean.annotate({
+      description:
+        "Run the session in a new git worktree of cwd's repository, on a new branch the CLI names. " +
+        "cwd must be inside a git repository.",
+    }),
+  ),
+  worktreeName: Schema.optionalKey(
+    Schema.String.annotate({
+      description:
+        "Branch the worktree uses or creates, such as feature/x; implies worktree. " +
+        "It fails if that branch is already checked out in another worktree.",
+    }),
+  ),
+}
+
 const Create = Tool.make("session_create", {
   description:
     "Start a Droid session in a directory. Every other session tool takes its sessionId. " +
-    "Autonomy must not exceed the server's cap.",
+    "Autonomy must not exceed the server's cap. Set worktree or worktreeName to run the " +
+    "session in its own git worktree; the result's worktree gives its path and branch, " +
+    "and cwd stays the directory you passed.",
   parameters: Schema.Struct({
     cwd: Schema.String,
     autonomyLevel: AutonomySchema,
@@ -31,11 +57,13 @@ const Create = Tool.make("session_create", {
     reasoningEffort: Schema.optionalKey(Schema.String),
     restrictToolIds: Schema.optionalKey(Schema.Array(Schema.String)),
     disabledToolIds: Schema.optionalKey(Schema.Array(Schema.String)),
+    ...WorktreeParams,
   }),
   success: Schema.Struct({
     sessionId: Schema.String,
     cwd: Schema.String,
     settings: SessionSettingsSchema,
+    worktree: Schema.optionalKey(WorktreeSchema),
   }),
   failure: ToolFailure,
   dependencies: [SessionHubService],
@@ -103,6 +131,7 @@ const List = Tool.make("session_list", {
         status: TurnStatusSchema,
         cursor: Schema.Int.check(Schema.isGreaterThanOrEqualTo(0)),
         settings: SessionSettingsSchema,
+        worktree: Schema.optionalKey(WorktreeSchema),
       }),
     ),
   }),
@@ -129,6 +158,8 @@ export const sessionTools = (config: Config) => {
             reasoningEffort: params.reasoningEffort,
             restrictToolIds: params.restrictToolIds,
             disabledToolIds: params.disabledToolIds,
+            worktree: params.worktree,
+            worktreeName: params.worktreeName,
           })
           .pipe(Effect.mapError(toolFailure))
       }),

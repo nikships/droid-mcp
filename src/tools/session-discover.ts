@@ -6,10 +6,10 @@ import * as Schema from "effect/Schema"
 import type { Config } from "../config.ts"
 import { presentFields, toJsonValue } from "../droid/protocol.ts"
 import type { JsonValue } from "../droid/protocol.ts"
-import { SessionHubService, TurnResultSchema } from "../droid/turns.ts"
+import { SessionHubService, TurnResultSchema, WorktreeSchema } from "../droid/turns.ts"
 import { ToolFailure } from "./failure.ts"
 import { requireAutonomy, requireCwd, toolFailure } from "./guards.ts"
-import { AutonomySchema, WaitMsSchema } from "./session.ts"
+import { AutonomySchema, WaitMsSchema, WorktreeParams } from "./session.ts"
 
 const send = (
   sessionId: string,
@@ -67,15 +67,19 @@ const Run = Tool.make("session_run", {
     "Create a session and run one turn. The session is closed when the turn completes, fails, " +
     "or is interrupted. A running result keeps the session: poll session_events with the " +
     "returned cursor, answer prompts, then call session_close. Use session_create when you " +
-    "need more than one turn.",
+    "need more than one turn. Set worktree or worktreeName to run in its own git worktree.",
   parameters: Schema.Struct({
     cwd: Schema.String,
     prompt: Schema.String,
     autonomyLevel: AutonomySchema,
     modelId: Schema.optionalKey(Schema.String),
     waitMs: Schema.optionalKey(WaitMsSchema),
+    ...WorktreeParams,
   }),
-  success: TurnResultSchema,
+  success: Schema.Struct({
+    ...TurnResultSchema.fields,
+    worktree: Schema.optionalKey(WorktreeSchema),
+  }),
   failure: ToolFailure,
   dependencies: [SessionHubService],
 })
@@ -115,6 +119,8 @@ export const sessionDiscoverTools = (config: Config) => {
               autonomyLevel,
               maxAutonomy: config.maxAutonomy,
               modelId,
+              worktree: params.worktree,
+              worktreeName: params.worktreeName,
             })
             .pipe(Effect.mapError(toolFailure))
 
@@ -133,7 +139,9 @@ export const sessionDiscoverTools = (config: Config) => {
 
               if (result.status === "running") retain = true
 
-              return result
+              return created.worktree === undefined
+                ? result
+                : { ...result, worktree: created.worktree }
             }),
             Effect.gen(function* () {
               if (retain) return

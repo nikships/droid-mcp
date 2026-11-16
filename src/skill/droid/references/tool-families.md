@@ -244,6 +244,8 @@ state before retrying a mutation after a transport error or timeout.
   Repeat only safe reads; reconcile writes.
 - `internal_error`: unexpected dispatch failure; inspect state before retrying.
 - `invalid_cwd`, `invalid_prompt`: use an existing absolute directory or a nonblank prompt.
+- `invalid_worktree`: use a nonblank `worktreeName` that does not start with `-`,
+  and do not pair it with `worktree: false`. The CLI rejects other bad branch names.
 - `autonomy_exceeds_cap`: lower requested authority to the reported cap.
 - `session_not_found`, `session_closed`: wrong/closed/dead handle; inspect events
   if retained, close a dead child, create a new session if needed.
@@ -255,7 +257,8 @@ state before retrying a mutation after a transport error or timeout.
   `editedSpecContent`; see [prompts](prompts.md).
 - `process_exit`: CLI died (event code); the session is unusable. Inspect failure and close.
 - `exec_failed`, `exec_timeout`: child launch/request failed or timed out.
-  Inspect current turn/file state before rerunning.
+  The message carries the CLI's stderr, such as a `worktree` request outside a
+  git repository. Inspect current turn/file state before rerunning.
 - `daemon_unavailable`, `daemon_timeout`, `websocket_error`: daemon/socket
   unavailable or request timeout. Restore connectivity, inspect state, then retry only if safe.
 - `daemon_auth_rejected`, `factory_api_key_missing`: repair server-side credentials/authentication.

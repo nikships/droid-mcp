@@ -71,10 +71,35 @@ events. Advancing the cursor prevents duplicates, but cannot restore lost
 text. `result_read` only pages dispatch results; it cannot restore event text
 already clipped by the session hub. Use an output file for large deliverables.
 
+## Isolate with a worktree
+
+Parallel sessions in one repository edit the same files. Give each its own
+checkout and branch with `worktree` or `worktreeName` on `session_create` or
+`session_run`:
+
+```json
+{
+  "cwd": "/absolute/repo",
+  "autonomyLevel": "low",
+  "worktreeName": "feature/retry-helper"
+}
+```
+
+`worktree: true` lets the CLI name the branch; `worktreeName` picks the branch
+to use or create and implies `worktree`. `cwd` must be inside a git repository,
+and a branch already checked out in another worktree is refused with
+`exec_failed` and the CLI's reason. The result adds `worktree: { path, branch }`;
+`cwd` stays the directory you passed, so read files from `worktree.path`.
+`session_list` shows it too.
+
+When the session ends the CLI deletes a worktree that is still clean and keeps
+one with changes. The branch always stays. Merge or remove a kept worktree
+yourself.
+
 ## One-shot alternative
 
-`session_run` accepts `cwd`, `prompt`, `autonomyLevel`, optional `modelId`
-and `waitMs`. In compact use:
+`session_run` accepts `cwd`, `prompt`, `autonomyLevel`, optional `modelId`,
+`waitMs`, `worktree`, and `worktreeName`. In compact use:
 
 ```json
 {
